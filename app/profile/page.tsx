@@ -1,8 +1,7 @@
+import ProfileContent from "./Components/ProfileContent"
 
 const ProfilePage = () => {
-  return (
-    <div>ProfilePage</div>
-  )
+  return <ProfileContent />
 }
 
 export default ProfilePage

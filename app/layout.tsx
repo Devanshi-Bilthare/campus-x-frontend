@@ -3,6 +3,7 @@ import { Inter, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "./ThemeProvider";
 import ConditionalNavbar from "./components/ConditionalNavbar";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -32,6 +33,7 @@ export default function RootLayout({
         className={`${inter.variable} ${bricolageGrotesque.variable} antialiased`}
       >
         <ThemeProvider>
+          <Toaster position="top-right" />
           <div className="w-full flex justify-center">
             <div className="w-full max-w-[1400px]">
               <ConditionalNavbar />

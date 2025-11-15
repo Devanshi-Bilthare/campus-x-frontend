@@ -7,7 +7,7 @@ const Banner = () => {
     <div 
       className="w-full md:w-[50%] relative p-4 md:p-8 min-h-[300px] md:min-h-screen"
       style={{
-        backgroundImage: 'url(/auth/signup-bg.avif)',
+        backgroundImage: 'url(/auth/forgot-password-bg.avif)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -23,10 +23,10 @@ const Banner = () => {
           </div>
         </Link>
         <Typography variant="h1" color="white" sx={{ width: { xs: '100%', md: '60%' }, mt: { xs: 4, md: 8 }, fontSize: { xs: '1.75rem', md: '3rem' } }}>
-        Teach What You Know. Learn What You Love
+        Oops! Lost Your Password? Let's Get You Back In!
         </Typography>
         <Typography variant="body1" color="white" sx={{ width: { xs: '100%', md: '60%' }, mt: { xs: 2, md: 4 }, fontSize: { xs: '0.875rem', md: '1rem' } }}>
-        Whether you're here to guide or to grow, this platform connects you with learners and teachers who share your passion.
+        Enter your email address and we'll send you a link to reset your password and get back to your learning journey.
         </Typography>
       </div>
     </div>
@@ -34,3 +34,4 @@ const Banner = () => {
 };
 
 export default Banner;
+

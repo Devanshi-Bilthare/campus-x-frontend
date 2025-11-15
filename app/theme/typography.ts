@@ -129,3 +129,16 @@ export const button = {
     backgroundColor: '#1a4a50',
   },
 };
+
+
+export const outlineButton = {
+  fontSize: '0.875rem', // 14px
+  fontWeight: 500,
+  lineHeight: 1.5,
+  letterSpacing: '0.02em',
+  textTransform: 'none' as const,
+  width: 'max-content',
+  borderRadius: '8px',
+  border: '1px solid #25666e',
+  color: '#25666e',
+};

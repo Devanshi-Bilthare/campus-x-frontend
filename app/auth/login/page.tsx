@@ -1,13 +1,13 @@
 import Banner from "./components/Banner"
-import SignUpForm from "./components/SignUpForm"
+import LoginForm from "./components/LoginForm"
 
-const SignupPage = () => {
+const LoginPage = () => {
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
         <Banner />
-        <SignUpForm />
+        <LoginForm />
     </div>
   )
 }
 
-export default SignupPage
+export default LoginPage

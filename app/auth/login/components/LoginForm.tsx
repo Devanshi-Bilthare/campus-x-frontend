@@ -8,25 +8,21 @@ import { useRouter } from "next/navigation";
 import { authService } from "@/app/services/authService";
 import { successAlert, errorAlert } from "@/components/ToastGroup";
 
-const SignUpForm = () => {
+const LoginForm = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
-      fullName: "",
       username: "",
-      email: "",
       password: "",
     },
     onSubmit: async (values) => {
       setIsLoading(true);
 
       try {
-        const data = await authService.register({
-          fullName: values.fullName,
+        const data = await authService.login({
           username: values.username,
-          email: values.email,
           password: values.password,
         });
 
@@ -37,14 +33,14 @@ const SignUpForm = () => {
             localStorage.setItem('user', JSON.stringify(data.data.user));
           }
           
-          successAlert('Account created successfully!', 'top-right');
+          successAlert('Login successful!', 'top-right');
           
           // Redirect to home or dashboard
           setTimeout(() => {
             router.push('/');
           }, 1000);
         } else {
-          errorAlert('Registration failed. Please try again.', 'top-right');
+          errorAlert(data.message || 'Login failed. Please try again.', 'top-right');
         }
       } catch (error: any) {
         errorAlert(error.message || 'An error occurred. Please try again.', 'top-right');
@@ -55,22 +51,13 @@ const SignUpForm = () => {
   });
   return (
     <div className="w-full md:w-[50%] p-4 md:p-8 text-center">
-      <Typography variant="h3" sx={{ fontSize: { xs: '1.5rem', md: '2rem' } }}>Sign Up</Typography>
-      <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>Create Your Free Account</Typography>
+      <Typography variant="h3" sx={{ fontSize: { xs: '1.5rem', md: '2rem' } }}>Login</Typography>
+      <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>Welcome Back to CampusX</Typography>
 
       <form onSubmit={formik.handleSubmit} className="text-start px-4 md:px-20">
       <Grid container spacing={2} mt={2}>
         <Grid size={{ xs: 12 }}>
           <InputField
-            label="Full Name"
-            name="fullName"
-            type="text"
-            placeholder="Enter your full name"
-            formik={formik}
-          />
-        </Grid>
-        <Grid size={{ xs: 12 }}>
-            <InputField
             label="Username"
             name="username"
             type="text"
@@ -79,16 +66,7 @@ const SignUpForm = () => {
           />
         </Grid>
         <Grid size={{ xs: 12 }}>   
-            <InputField
-            label="Email"
-            name="email"
-            type="email"
-            placeholder="Enter your email"
-            formik={formik}
-          />
-        </Grid>
-        <Grid size={{ xs: 12 }}>    
-            <InputField
+          <InputField
             label="Password"
             name="password"
             type="password"
@@ -96,9 +74,16 @@ const SignUpForm = () => {
             formik={formik}
           />
         </Grid>
-        <Typography variant="body2" color="text.secondary" >Already have an account? <Link href="/auth/login">Login</Link></Typography>
+        <Grid size={{ xs: 12 }}>
+          <Typography variant="body2" sx={{ textAlign: 'right', mb: 1 }}>
+            <Link href="/auth/forgot-password" sx={{ textDecoration: 'none', color: '#25666e' }}>
+              Forgot Password?
+            </Link>
+          </Typography>
+        </Grid>
+        <Typography variant="body2" color="text.secondary" >Don't have an account? <Link href="/auth/signup">Sign Up</Link></Typography>
         <Button sx={button} type="submit" disabled={isLoading}>
-          {isLoading ? 'Signing Up...' : 'Sign Up'}
+          {isLoading ? 'Logging in...' : 'Login'}
         </Button>
       </Grid>
       </form>
@@ -106,4 +91,5 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export default LoginForm;
+

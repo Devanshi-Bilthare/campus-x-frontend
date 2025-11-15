@@ -11,21 +11,38 @@ interface ProfileData {
   gender?: string;
   profileImage?: string;
   academics?: {
-    college?: string;
+    collegeName?: string;
     branch?: string;
     semester?: number;
     yearOfGraduation?: number;
     yearOfJoining?: number;
-    cgpa?: number;
+    gpa?: number;
     degree?: string;
     yearsOfExperience?: number;
   };
+  skills?: {
+    academic?: string[];
+    hobby?: string[];
+    other?: string[];
+  };
+  certificates?: Array<{
+    name: string;
+    issuer: string;
+    issueDate: string | Date;
+    expiryDate?: string | Date;
+    credentialId?: string;
+    credentialUrl?: string;
+  }>;
 }
 
 interface ProfileResponse {
   success: boolean;
   message?: string;
   data?: any;
+  errors?: Array<{
+    field: string;
+    message: string;
+  }>;
 }
 
 export const profileService = {
@@ -76,6 +93,13 @@ export const profileService = {
     const result = await response.json();
     
     if (!response.ok) {
+      // If there are validation errors, throw them with the error structure
+      if (result.errors && Array.isArray(result.errors)) {
+        const error: any = new Error(result.message || 'Validation error');
+        error.errors = result.errors;
+        error.response = result;
+        throw error;
+      }
       throw new Error(result.message || 'Failed to update profile.');
     }
 

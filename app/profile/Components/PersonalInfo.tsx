@@ -4,8 +4,9 @@ import { Grid, Typography, Button, Dialog, DialogTitle, DialogContent, DialogAct
 import { outlineButton, button } from "@/app/theme/typography"
 import EditIcon from "@mui/icons-material/Edit"
 import CloseIcon from "@mui/icons-material/Close"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useFormik } from "formik"
+import * as Yup from "yup"
 import InputField from "@/components/InputField"
 import SelectField from "@/components/SelectField"
 import { profileService } from "@/app/services/profileService"
@@ -22,6 +23,11 @@ const PersonalInfo = ({ user, refreshProfile, onToggleEdit }: PersonalInfoProps)
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
+  const validationSchema = Yup.object({
+    fullName: Yup.string().required('Full name is required'),
+    username: Yup.string().required('Username is required'),
+  });
+
   const formik = useFormik({
     initialValues: {
       fullName: user?.fullName || '',
@@ -32,6 +38,7 @@ const PersonalInfo = ({ user, refreshProfile, onToggleEdit }: PersonalInfoProps)
       gender: user?.gender || '',
     },
     enableReinitialize: true,
+    validationSchema,
     onSubmit: async (values) => {
       setIsLoading(true);
       try {
@@ -44,25 +51,25 @@ const PersonalInfo = ({ user, refreshProfile, onToggleEdit }: PersonalInfoProps)
           successAlert('Profile updated successfully!', 'top-right');
         }
       } catch (error: any) {
-        errorAlert(error.message || 'Failed to update profile.', 'top-right');
+        // Check if error has validation errors structure
+        if (error.errors && Array.isArray(error.errors)) {
+          error.errors.forEach((err: any) => {
+            const fieldName = err.field || '';
+            if (fieldName) {
+              formik.setFieldError(fieldName, err.message);
+              formik.setFieldTouched(fieldName, true);
+            }
+          });
+          errorAlert(error.message || 'Please fix the validation errors.', 'top-right');
+        } else {
+          errorAlert(error.message || 'Failed to update profile.', 'top-right');
+        }
       } finally {
         setIsLoading(false);
       }
     },
   });
 
-  useEffect(() => {
-    if (user) {
-      formik.setValues({
-        fullName: user.fullName || '',
-        email: user.email || '',
-        username: user.username || '',
-        phoneNumber: user.phoneNumber || '',
-        city: user.city || '',
-        gender: user.gender || '',
-      });
-    }
-  }, [user]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -215,7 +222,7 @@ const PersonalInfo = ({ user, refreshProfile, onToggleEdit }: PersonalInfoProps)
             <Button 
               sx={{ ...button, width: 'auto', px: 4 }} 
               type="submit" 
-              disabled={isLoading}
+              disabled={isLoading || !formik.isValid}
             >
               {isLoading ? (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

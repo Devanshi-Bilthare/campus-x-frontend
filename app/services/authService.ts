@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/users';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 interface RegisterData {
   fullName: string;
@@ -52,7 +52,7 @@ interface LoginResponse {
 
 export const authService = {
   register: async (data: RegisterData): Promise<RegisterResponse> => {
-    const response = await fetch(`${API_BASE_URL}/register`, {
+    const response = await fetch(`${API_BASE_URL}/users/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ export const authService = {
   },
 
   forgotPassword: async (data: ForgotPasswordData): Promise<ForgotPasswordResponse> => {
-    const response = await fetch(`${API_BASE_URL}/forgot-password`, {
+    const response = await fetch(`${API_BASE_URL}/users/forgot-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ export const authService = {
   },
 
   resetPassword: async (data: ResetPasswordData): Promise<ResetPasswordResponse> => {
-    const response = await fetch(`${API_BASE_URL}/reset-password`, {
+    const response = await fetch(`${API_BASE_URL}/users/reset-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ export const authService = {
   },
 
   login: async (data: LoginData): Promise<LoginResponse> => {
-    const response = await fetch(`${API_BASE_URL}/login`, {
+    const response = await fetch(`${API_BASE_URL}/users/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

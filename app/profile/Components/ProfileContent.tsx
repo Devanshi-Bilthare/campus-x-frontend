@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, SyntheticEvent } from "react";
-import { Grid, Box, CircularProgress, Tabs, Tab, Stack } from "@mui/material";
+import { Grid, Box, CircularProgress, Tabs, Tab, Stack, useMediaQuery, useTheme } from "@mui/material";
 import ProfileBanner from "./ProfileBanner";
 import PersonalInfo from "./PersonalInfo";
 import AcadimicDetails from "./AcadimicDetails";
@@ -18,6 +18,8 @@ const TABS = [
 const ProfileContent = () => {
   const { user, isLoading, refreshProfile } = useProfile();
   const [activeTab, setActiveTab] = useState("overview");
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleTabChange = (_: SyntheticEvent, newValue: string) => {
     setActiveTab(newValue);
@@ -35,18 +37,20 @@ const ProfileContent = () => {
     <div>
       <ProfileBanner user={user} refreshProfile={refreshProfile} />
 
-      <Box sx={{ mt: 4, px: { xs: 2, md: 4 } }}>
+      <Box sx={{ mt: 4, px: { xs: 2, md: 4 }, width: '100%' }}>
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
-          variant="scrollable"
-          allowScrollButtonsMobile
+          variant={isMobile ? "scrollable" : "fullWidth"}
+          scrollButtons={false}
           sx={{
+            width: '100%',
             "& .MuiTab-root": {
               textTransform: "none",
               fontWeight: 600,
-              fontSize: "1rem",
+              fontSize: { xs: "0.875rem", md: "1rem" },
               color: "#667085",
+              minWidth: { xs: 100, md: 'auto' },
             },
             "& .Mui-selected": {
               color: "#25666e",
@@ -54,6 +58,16 @@ const ProfileContent = () => {
             "& .MuiTabs-indicator": {
               backgroundColor: "#25666e",
               height: "3px",
+            },
+            "& .MuiTabs-scrollButtons": {
+              display: "none",
+            },
+            "& .MuiTabs-scrollableContainer": {
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
             },
           }}
         >

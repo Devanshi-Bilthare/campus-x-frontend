@@ -75,7 +75,7 @@ const ProfileBanner = ({ user, refreshProfile }: ProfileBannerProps) => {
   return (
     <div>
       <div
-        className="h-[300px] relative rounded-xl"
+        className="h-[200px] md:h-[300px] relative rounded-xl"
         style={{
           backgroundImage: "url(/profile-banner.avif)",
           backgroundSize: "cover",
@@ -86,9 +86,9 @@ const ProfileBanner = ({ user, refreshProfile }: ProfileBannerProps) => {
         <div className="absolute inset-0 bg-[#25666e]/70 z-0 rounded-xl"></div>
       </div>
 
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6 mt-[-60px] relative z-10 px-8">
-        <div className="flex items-center gap-6">
-          <div className="relative w-[150px] h-[150px]">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-6 mt-[-50px] md:mt-[-60px] relative z-10 px-4 md:px-8">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
+          <div className="relative w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[150px] md:h-[150px]">
             <div className="w-full h-full bg-white rounded-full border-4 border-[#25666e] overflow-hidden">
               <Image
                 src={user?.profilePicture || user?.profileImage || "/auth/profile.png"}
@@ -109,18 +109,27 @@ const ProfileBanner = ({ user, refreshProfile }: ProfileBannerProps) => {
                 color: "#fff",
                 "&:hover": { backgroundColor: "#1f4f55" },
                 boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                width: { xs: 28, md: 32 },
+                height: { xs: 28, md: 32 },
               }}
               aria-label="Edit profile photo"
             >
-              <EditIcon fontSize="small" />
+              <EditIcon sx={{ fontSize: { xs: 16, md: 18 } }} />
             </IconButton>
           </div>
-          <div className="mt-10">
-            <Typography variant="h6">{user?.fullName || "User"}</Typography>
-            <Typography variant="body1">{user?.email || ""}</Typography>
+          <div className="mt-0 sm:mt-10 text-center sm:text-left">
+            <Typography variant="h6" sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}>
+              {user?.fullName || "User"}
+            </Typography>
+            <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
+              {user?.email || ""}
+            </Typography>
           </div>
         </div>
-        <Button sx={{ ...button, width: "150px", mt: { xs: 0, md: "40px" } }} onClick={handleLogout}>
+        <Button 
+          sx={{ ...button, width: { xs: "100%", sm: "150px" }, mt: { xs: 2, md: "40px" } }} 
+          onClick={handleLogout}
+        >
           Log Out
         </Button>
       </div>
@@ -134,11 +143,15 @@ const ProfileBanner = ({ user, refreshProfile }: ProfileBannerProps) => {
           sx: {
             borderRadius: "16px",
             p: { xs: 1, md: 2 },
+            m: { xs: 2, md: 3 },
+            maxHeight: { xs: '90vh', md: 'auto' },
           },
         }}
       >
-        <DialogTitle>Update Profile Photo</DialogTitle>
-        <DialogContent dividers>
+        <DialogTitle sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' }, px: { xs: 2, md: 3 } }}>
+          Update Profile Photo
+        </DialogTitle>
+        <DialogContent dividers sx={{ px: { xs: 2, md: 3 } }}>
           <ImageUpload
             value={imageValue}
             onChange={setImageValue}
@@ -146,16 +159,16 @@ const ProfileBanner = ({ user, refreshProfile }: ProfileBannerProps) => {
             label="Profile Photo"
           />
         </DialogContent>
-        <DialogActions sx={{ p: 3, gap: 2 }}>
+        <DialogActions sx={{ p: { xs: 2, md: 3 }, gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
           <Button
-            sx={{ ...outlineButton, width: 140 }}
+            sx={{ ...outlineButton, width: { xs: '100%', sm: 140 } }}
             onClick={handleCloseModal}
             disabled={isSavingImage}
           >
             Cancel
           </Button>
           <Button
-            sx={{ ...button, width: 160 }}
+            sx={{ ...button, width: { xs: '100%', sm: 160 } }}
             onClick={handleSaveProfileImage}
             disabled={isSavingImage || !imageValue}
           >

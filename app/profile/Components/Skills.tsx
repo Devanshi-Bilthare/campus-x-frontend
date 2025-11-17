@@ -88,12 +88,14 @@ const Skills = ({ user, refreshProfile }: SkillsProps) => {
       <Grid size={{ xs: 12, md: 4 }} sx={{
         backgroundColor: '#52939b',
         color: '#fff',
-        padding: '20px',
+        padding: { xs: '16px', md: '20px' },
         borderRadius: '12px',
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
       }}>
         <div className="flex justify-between items-center mb-4">
-          <Typography variant="h3" color="white">Skills</Typography>
+          <Typography variant="h3" color="white" sx={{ fontSize: { xs: '1.25rem', md: '2rem' } }}>
+            Skills
+          </Typography>
           <IconButton 
             onClick={handleOpen}
             sx={{ 
@@ -101,13 +103,15 @@ const Skills = ({ user, refreshProfile }: SkillsProps) => {
               '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' }
             }}
           >
-            <EditIcon />
+            <EditIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
           </IconButton>
         </div>
         
         {academicSkills.length > 0 && (
           <Box sx={{ mb: 3 }}>
-            <Typography variant="body2" color="white" sx={{ opacity: 0.9, mb: 1.5, fontWeight: 500 }}>Academic</Typography>
+            <Typography variant="body2" color="white" sx={{ opacity: 0.9, mb: 1.5, fontWeight: 500, fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
+              Academic
+            </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {academicSkills.map((skill: string, index: number) => (
                 <Chip 
@@ -117,6 +121,7 @@ const Skills = ({ user, refreshProfile }: SkillsProps) => {
                     backgroundColor: 'rgba(255,255,255,0.2)',
                     color: 'white',
                     border: '1px solid rgba(255,255,255,0.3)',
+                    fontSize: { xs: '0.75rem', md: '0.875rem' },
                   }}
                 />
               ))}
@@ -126,7 +131,9 @@ const Skills = ({ user, refreshProfile }: SkillsProps) => {
 
         {hobbySkills.length > 0 && (
           <Box sx={{ mb: 3 }}>
-            <Typography variant="body2" color="white" sx={{ opacity: 0.9, mb: 1.5, fontWeight: 500 }}>Hobby</Typography>
+            <Typography variant="body2" color="white" sx={{ opacity: 0.9, mb: 1.5, fontWeight: 500, fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
+              Hobby
+            </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {hobbySkills.map((skill: string, index: number) => (
                 <Chip 
@@ -136,6 +143,7 @@ const Skills = ({ user, refreshProfile }: SkillsProps) => {
                     backgroundColor: 'rgba(255,255,255,0.2)',
                     color: 'white',
                     border: '1px solid rgba(255,255,255,0.3)',
+                    fontSize: { xs: '0.75rem', md: '0.875rem' },
                   }}
                 />
               ))}
@@ -145,7 +153,9 @@ const Skills = ({ user, refreshProfile }: SkillsProps) => {
 
         {otherSkills.length > 0 && (
           <Box>
-            <Typography variant="body2" color="white" sx={{ opacity: 0.9, mb: 1.5, fontWeight: 500 }}>Other</Typography>
+            <Typography variant="body2" color="white" sx={{ opacity: 0.9, mb: 1.5, fontWeight: 500, fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
+              Other
+            </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {otherSkills.map((skill: string, index: number) => (
                 <Chip 
@@ -155,6 +165,7 @@ const Skills = ({ user, refreshProfile }: SkillsProps) => {
                     backgroundColor: 'rgba(255,255,255,0.2)',
                     color: 'white',
                     border: '1px solid rgba(255,255,255,0.3)',
+                    fontSize: { xs: '0.75rem', md: '0.875rem' },
                   }}
                 />
               ))}
@@ -163,7 +174,7 @@ const Skills = ({ user, refreshProfile }: SkillsProps) => {
         )}
 
         {academicSkills.length === 0 && hobbySkills.length === 0 && otherSkills.length === 0 && (
-          <Typography variant="body1" color="white" sx={{ opacity: 0.7, fontStyle: 'italic' }}>
+          <Typography variant="body1" color="white" sx={{ opacity: 0.7, fontStyle: 'italic', fontSize: { xs: '0.875rem', md: '1rem' } }}>
             No skills added yet
           </Typography>
         )}
@@ -178,17 +189,21 @@ const Skills = ({ user, refreshProfile }: SkillsProps) => {
           sx: {
             borderRadius: '12px',
             padding: '8px',
+            m: { xs: 2, md: 3 },
+            maxHeight: { xs: '90vh', md: 'auto' },
           }
         }}
       >
-        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2 }}>
-          <Typography variant="h3">Edit Skills</Typography>
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2, px: { xs: 2, md: 3 } }}>
+          <Typography variant="h3" sx={{ fontSize: { xs: '1.25rem', md: '2rem' } }}>
+            Edit Skills
+          </Typography>
           <IconButton onClick={handleClose} size="small">
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <form onSubmit={formik.handleSubmit}>
-          <DialogContent>
+          <DialogContent sx={{ px: { xs: 2, md: 3 } }}>
             <Grid container spacing={2}>
               <Grid size={{ xs: 12 }}>
                 <InputField
@@ -219,16 +234,16 @@ const Skills = ({ user, refreshProfile }: SkillsProps) => {
               </Grid>
             </Grid>
           </DialogContent>
-          <DialogActions sx={{ px: 3, pb: 3, gap: 2 }}>
+          <DialogActions sx={{ px: { xs: 2, md: 3 }, pb: 3, gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
             <Button 
-              sx={{ ...outlineButton, height: "50px", width: "160px" }} 
+              sx={{ ...outlineButton, height: "50px", width: { xs: '100%', sm: "160px" } }} 
               onClick={handleClose} 
               disabled={isLoading}
             >
               Cancel
             </Button>
             <Button 
-              sx={{ ...button, width: 'auto', px: 4 }} 
+              sx={{ ...button, width: { xs: '100%', sm: 'auto' }, px: 4 }} 
               type="submit" 
               disabled={isLoading}
             >

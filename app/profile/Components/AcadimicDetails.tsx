@@ -108,12 +108,14 @@ const AcadimicDetails = ({ user, refreshProfile }: AcadimicDetailsProps) => {
       <Grid size={{ xs: 12, md: 4 }} sx={{
         backgroundColor: '#52939b',
         color: '#fff',
-        padding: '20px',
+        padding: { xs: '16px', md: '20px' },
         borderRadius: '12px',
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
       }}>
         <div className="flex justify-between items-center mb-4">
-          <Typography variant="h3" color="white">Academic Details</Typography>
+          <Typography variant="h3" color="white" sx={{ fontSize: { xs: '1.25rem', md: '2rem' } }}>
+            Academic Details
+          </Typography>
           <IconButton 
             onClick={handleOpen}
             sx={{ 
@@ -121,44 +123,72 @@ const AcadimicDetails = ({ user, refreshProfile }: AcadimicDetailsProps) => {
               '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' }
             }}
           >
-            <EditIcon />
+            <EditIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
           </IconButton>
         </div>
-        <div className="flex justify-between items-center mt-3 border-b border-white/30 pb-2">
-          <Typography variant="body1" color="white" sx={{ opacity: 0.9 }}>College</Typography>
-          <Typography variant="body1" color="white" sx={{ fontWeight: 500, textAlign: 'right', maxWidth: '60%' }}>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-3 border-b border-white/30 pb-2 gap-1">
+          <Typography variant="body1" color="white" sx={{ opacity: 0.9, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            College
+          </Typography>
+          <Typography variant="body1" color="white" sx={{ fontWeight: 500, textAlign: { xs: 'left', sm: 'right' }, maxWidth: { sm: '60%' }, fontSize: { xs: '0.875rem', md: '1rem' } }}>
             {academics?.collegeName || '--'}
           </Typography>
         </div>
-        <div className="flex justify-between items-center mt-3 border-b border-white/30 pb-2">
-          <Typography variant="body1" color="white" sx={{ opacity: 0.9 }}>Branch</Typography>
-          <Typography variant="body1" color="white" sx={{ fontWeight: 500, textAlign: 'right', maxWidth: '60%' }}>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-3 border-b border-white/30 pb-2 gap-1">
+          <Typography variant="body1" color="white" sx={{ opacity: 0.9, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            Branch
+          </Typography>
+          <Typography variant="body1" color="white" sx={{ fontWeight: 500, textAlign: { xs: 'left', sm: 'right' }, maxWidth: { sm: '60%' }, fontSize: { xs: '0.875rem', md: '1rem' } }}>
             {academics?.branch || '--'}
           </Typography>
         </div>
-        <div className="flex justify-between items-center mt-3 border-b border-white/30 pb-2">
-          <Typography variant="body1" color="white" sx={{ opacity: 0.9 }}>Semester</Typography>
-          <Typography variant="body1" color="white" sx={{ fontWeight: 500 }}>{academics?.semester || '--'}</Typography>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-3 border-b border-white/30 pb-2 gap-1">
+          <Typography variant="body1" color="white" sx={{ opacity: 0.9, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            Semester
+          </Typography>
+          <Typography variant="body1" color="white" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            {academics?.semester || '--'}
+          </Typography>
         </div>
-        <div className="flex justify-between items-center mt-3 border-b border-white/30 pb-2">
-          <Typography variant="body1" color="white" sx={{ opacity: 0.9 }}>Year of Graduation</Typography>
-          <Typography variant="body1" color="white" sx={{ fontWeight: 500 }}>{academics?.yearOfGraduation || '--'}</Typography>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-3 border-b border-white/30 pb-2 gap-1">
+          <Typography variant="body1" color="white" sx={{ opacity: 0.9, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            Year of Graduation
+          </Typography>
+          <Typography variant="body1" color="white" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            {academics?.yearOfGraduation || '--'}
+          </Typography>
         </div>
-        <div className="flex justify-between items-center mt-3 border-b border-white/30 pb-2">
-          <Typography variant="body1" color="white" sx={{ opacity: 0.9 }}>Year of Joining</Typography>
-          <Typography variant="body1" color="white" sx={{ fontWeight: 500 }}>{academics?.yearOfJoining || '--'}</Typography>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-3 border-b border-white/30 pb-2 gap-1">
+          <Typography variant="body1" color="white" sx={{ opacity: 0.9, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            Year of Joining
+          </Typography>
+          <Typography variant="body1" color="white" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            {academics?.yearOfJoining || '--'}
+          </Typography>
         </div>
-        <div className="flex justify-between items-center mt-3 border-b border-white/30 pb-2">
-          <Typography variant="body1" color="white" sx={{ opacity: 0.9 }}>GPA</Typography>
-          <Typography variant="body1" color="white" sx={{ fontWeight: 500 }}>{academics?.gpa || '--'}</Typography>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-3 border-b border-white/30 pb-2 gap-1">
+          <Typography variant="body1" color="white" sx={{ opacity: 0.9, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            GPA
+          </Typography>
+          <Typography variant="body1" color="white" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            {academics?.gpa || '--'}
+          </Typography>
         </div>
-        <div className="flex justify-between items-center mt-3 border-b border-white/30 pb-2">
-          <Typography variant="body1" color="white" sx={{ opacity: 0.9 }}>Degree</Typography>
-          <Typography variant="body1" color="white" sx={{ fontWeight: 500 }}>{academics?.degree || '--'}</Typography>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-3 border-b border-white/30 pb-2 gap-1">
+          <Typography variant="body1" color="white" sx={{ opacity: 0.9, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            Degree
+          </Typography>
+          <Typography variant="body1" color="white" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            {academics?.degree || '--'}
+          </Typography>
         </div>
-        <div className="flex justify-between items-center mt-3">
-          <Typography variant="body1" color="white" sx={{ opacity: 0.9 }}>Years of Experience</Typography>
-          <Typography variant="body1" color="white" sx={{ fontWeight: 500 }}>{academics?.yearsOfExperience || '--'}</Typography>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-3 gap-1">
+          <Typography variant="body1" color="white" sx={{ opacity: 0.9, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            Years of Experience
+          </Typography>
+          <Typography variant="body1" color="white" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            {academics?.yearsOfExperience || '--'}
+          </Typography>
         </div>
       </Grid>
 
@@ -171,17 +201,21 @@ const AcadimicDetails = ({ user, refreshProfile }: AcadimicDetailsProps) => {
           sx: {
             borderRadius: '12px',
             padding: '8px',
+            m: { xs: 2, md: 3 },
+            maxHeight: { xs: '90vh', md: 'auto' },
           }
         }}
       >
-        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2 }}>
-          <Typography variant="h3">Edit Academic Details</Typography>
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2, px: { xs: 2, md: 3 } }}>
+          <Typography variant="h3" sx={{ fontSize: { xs: '1.25rem', md: '2rem' } }}>
+            Edit Academic Details
+          </Typography>
           <IconButton onClick={handleClose} size="small">
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <form onSubmit={formik.handleSubmit}>
-          <DialogContent>
+          <DialogContent sx={{ px: { xs: 2, md: 3 } }}>
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 6 }}>
                 <InputField
@@ -257,16 +291,16 @@ const AcadimicDetails = ({ user, refreshProfile }: AcadimicDetailsProps) => {
               </Grid>
             </Grid>
           </DialogContent>
-          <DialogActions sx={{ px: 3, pb: 3, gap: 2 }}>
+          <DialogActions sx={{ px: { xs: 2, md: 3 }, pb: 3, gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
             <Button 
-              sx={{ ...outlineButton, height: "50px", width: "160px" }} 
+              sx={{ ...outlineButton, height: "50px", width: { xs: '100%', sm: "160px" } }} 
               onClick={handleClose} 
               disabled={isLoading}
             >
               Cancel
             </Button>
             <Button 
-              sx={{ ...button, width: 'auto', px: 4 }} 
+              sx={{ ...button, width: { xs: '100%', sm: 'auto' }, px: 4 }} 
               type="submit" 
               disabled={isLoading || !formik.isValid}
             >

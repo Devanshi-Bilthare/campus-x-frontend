@@ -86,7 +86,7 @@ const Skills = ({ user, refreshProfile }: SkillsProps) => {
   return (
     <>
       <Grid size={{ xs: 12, md: 4 }} sx={{
-        backgroundColor: '#25666e',
+        backgroundColor: '#52939b',
         color: '#fff',
         padding: '20px',
         borderRadius: '12px',

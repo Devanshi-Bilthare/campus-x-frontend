@@ -23,8 +23,8 @@ const AcadimicDetails = ({ user, refreshProfile }: AcadimicDetailsProps) => {
   const academics = user?.academics || {};
 
   const validationSchema = Yup.object({
+    collegeName: Yup.string().required('College name is required'),
     branch: Yup.string().required('Branch is required'),
-    degree: Yup.string().required('Degree is required'),
   });
 
   const formik = useFormik({
@@ -106,7 +106,7 @@ const AcadimicDetails = ({ user, refreshProfile }: AcadimicDetailsProps) => {
   return (
     <>
       <Grid size={{ xs: 12, md: 4 }} sx={{
-        backgroundColor: '#25666e',
+        backgroundColor: '#52939b',
         color: '#fff',
         padding: '20px',
         borderRadius: '12px',

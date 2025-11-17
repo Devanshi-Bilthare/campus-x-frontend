@@ -10,6 +10,7 @@ interface ProfileData {
   city?: string;
   gender?: string;
   profileImage?: string;
+  profilePicture?: string;
   academics?: {
     collegeName?: string;
     branch?: string;

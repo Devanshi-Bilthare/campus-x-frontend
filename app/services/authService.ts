@@ -1,5 +1,69 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
+type ErrorResponse = {
+  success?: boolean;
+  message?: string;
+  errors?: Array<
+    | string
+    | {
+        field?: string;
+        message?: string;
+      }
+  >;
+};
+
+const extractErrorMessage = (result: ErrorResponse, fallback: string) => {
+  if (result?.errors && Array.isArray(result.errors)) {
+    const formattedMessages = result.errors
+      .map((err) => {
+        if (!err) return null;
+        if (typeof err === 'string') return err;
+        if (err.message && err.field) {
+          return `${err.field}: ${err.message}`;
+        }
+        return err.message || null;
+      })
+      .filter(Boolean);
+
+    if (formattedMessages.length) {
+      if (result.message && result.message.toLowerCase() !== 'validation error') {
+        return `${result.message}: ${formattedMessages.join(', ')}`;
+      }
+      return formattedMessages.join(', ');
+    }
+  }
+
+  if (result?.message) {
+    return result.message;
+  }
+
+  return fallback;
+};
+
+const parseResponse = async <T>(response: Response, fallbackMessage: string): Promise<T> => {
+  const result = await response.json();
+
+  if (!response.ok) {
+    const message = extractErrorMessage(result, fallbackMessage);
+    const error: any = new Error(message);
+    if (result?.errors) {
+      error.errors = result.errors;
+    }
+    throw error;
+  }
+
+  if (
+    result?.success === false &&
+    result?.message &&
+    result.message.toLowerCase() === 'validation error' &&
+    result.errors
+  ) {
+    result.message = extractErrorMessage(result, fallbackMessage);
+  }
+
+  return result;
+};
+
 interface RegisterData {
   fullName: string;
   username: string;
@@ -60,13 +124,7 @@ export const authService = {
       body: JSON.stringify(data),
     });
 
-    const result = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(result.message || 'Failed to register. Please try again.');
-    }
-
-    return result;
+    return parseResponse<RegisterResponse>(response, 'Failed to register. Please try again.');
   },
 
   forgotPassword: async (data: ForgotPasswordData): Promise<ForgotPasswordResponse> => {
@@ -78,13 +136,7 @@ export const authService = {
       body: JSON.stringify(data),
     });
 
-    const result = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(result.message || 'Failed to send reset link. Please try again.');
-    }
-
-    return result;
+    return parseResponse<ForgotPasswordResponse>(response, 'Failed to send reset link. Please try again.');
   },
 
   resetPassword: async (data: ResetPasswordData): Promise<ResetPasswordResponse> => {
@@ -96,13 +148,7 @@ export const authService = {
       body: JSON.stringify(data),
     });
 
-    const result = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(result.message || 'Failed to reset password. Please try again.');
-    }
-
-    return result;
+    return parseResponse<ResetPasswordResponse>(response, 'Failed to reset password. Please try again.');
   },
 
   login: async (data: LoginData): Promise<LoginResponse> => {
@@ -114,13 +160,7 @@ export const authService = {
       body: JSON.stringify(data),
     });
 
-    const result = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(result.message || 'Failed to login. Please check your credentials.');
-    }
-
-    return result;
+    return parseResponse<LoginResponse>(response, 'Failed to login. Please check your credentials.');
   },
 };
 

@@ -161,16 +161,18 @@ const Certificates = ({ user, refreshProfile }: CertificatesProps) => {
   return (
     <>
       <Grid size={{ xs: 12, md: 4 }} sx={{
-        backgroundColor: '#25666e',
+        backgroundColor: '#52939b',
         color: '#fff',
-        padding: '20px',
+        padding: { xs: '16px', md: '20px' },
         borderRadius: '12px',
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-        maxHeight: '600px',
+        maxHeight: { xs: '400px', md: '600px' },
         overflowY: 'auto',
       }}>
         <div className="flex justify-between items-center mb-4">
-          <Typography variant="h3" color="white">Certificates</Typography>
+          <Typography variant="h3" color="white" sx={{ fontSize: { xs: '1.25rem', md: '2rem' } }}>
+            Certificates
+          </Typography>
           <IconButton 
             onClick={handleOpen}
             sx={{ 
@@ -178,7 +180,7 @@ const Certificates = ({ user, refreshProfile }: CertificatesProps) => {
               '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' }
             }}
           >
-            <EditIcon />
+            <EditIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
           </IconButton>
         </div>
         
@@ -228,17 +230,21 @@ const Certificates = ({ user, refreshProfile }: CertificatesProps) => {
           sx: {
             borderRadius: '12px',
             padding: '8px',
+            m: { xs: 2, md: 3 },
+            maxHeight: { xs: '90vh', md: 'auto' },
           }
         }}
       >
-        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2 }}>
-          <Typography variant="h3">Edit Certificates</Typography>
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2, px: { xs: 2, md: 3 } }}>
+          <Typography variant="h3" sx={{ fontSize: { xs: '1.25rem', md: '2rem' } }}>
+            Edit Certificates
+          </Typography>
           <IconButton onClick={handleClose} size="small">
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <form onSubmit={formik.handleSubmit}>
-          <DialogContent>
+          <DialogContent sx={{ px: { xs: 2, md: 3 }, overflowY: 'auto' }}>
             <Grid container spacing={2}>
               {formik.values.certificates.map((cert: any, index: number) => (
                 <Box key={index} sx={{ width: '100%', mb: 3, p: 2, border: '1px solid #D0D5DD', borderRadius: '8px' }}>
@@ -321,16 +327,16 @@ const Certificates = ({ user, refreshProfile }: CertificatesProps) => {
               </Grid>
             </Grid>
           </DialogContent>
-          <DialogActions sx={{ px: 3, pb: 3, gap: 2 }}>
+          <DialogActions sx={{ px: { xs: 2, md: 3 }, pb: 3, gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
             <Button 
-              sx={{ ...outlineButton, height: "50px", width: "160px" }} 
+              sx={{ ...outlineButton, height: "50px", width: { xs: '100%', sm: "160px" } }} 
               onClick={handleClose} 
               disabled={isLoading}
             >
               Cancel
             </Button>
             <Button 
-              sx={{ ...button, width: 'auto', px: 4 }} 
+              sx={{ ...button, width: { xs: '100%', sm: 'auto' }, px: 4 }} 
               type="submit" 
               disabled={isLoading || !formik.isValid}
             >

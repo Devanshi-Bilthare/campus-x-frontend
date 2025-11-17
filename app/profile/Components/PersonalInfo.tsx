@@ -94,37 +94,51 @@ const PersonalInfo = ({ user, refreshProfile, onToggleEdit }: PersonalInfoProps)
 
   return (
     <>
-      <div className="px-8">
-        <div className="flex justify-between items-center mt-4">
-          <Typography variant="h3">Personal Information</Typography>
-          <Button sx={{ ...outlineButton }} onClick={handleOpen}>
+      <div className="px-4 md:px-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mt-4">
+          <Typography variant="h3" sx={{ fontSize: { xs: '1.5rem', md: '2rem' } }}>
+            Personal Information
+          </Typography>
+          <Button sx={{ ...outlineButton, width: { xs: '100%', sm: 'auto' } }} onClick={handleOpen}>
             <EditIcon sx={{ fontSize: 20, mr: 1 }} /> Edit
           </Button>
         </div>
         <Grid container spacing={2} mt={2}>
-          <Grid size={{ xs: 6, md: 3 }}>
-            <Typography variant="h6">Full Name</Typography>
-            <Typography variant="body1">{user?.fullName || '--'}</Typography>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Typography variant="h6" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>Full Name</Typography>
+            <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
+              {user?.fullName || '--'}
+            </Typography>
           </Grid>
-          <Grid size={{ xs: 6, md: 3 }}>
-            <Typography variant="h6">Email</Typography>
-            <Typography variant="body1">{user?.email || '--'}</Typography>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Typography variant="h6" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>Email</Typography>
+            <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
+              {user?.email || '--'}
+            </Typography>
           </Grid>
-          <Grid size={{ xs: 6, md: 3 }}>
-            <Typography variant="h6">Username</Typography>
-            <Typography variant="body1">{user?.username || '--'}</Typography>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Typography variant="h6" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>Username</Typography>
+            <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
+              {user?.username || '--'}
+            </Typography>
           </Grid>
-          <Grid size={{ xs: 6, md: 3 }}>
-            <Typography variant="h6">Phone</Typography>
-            <Typography variant="body1">{user?.phoneNumber || '--'}</Typography>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Typography variant="h6" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>Phone</Typography>
+            <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
+              {user?.phoneNumber || '--'}
+            </Typography>
           </Grid>
-          <Grid size={{ xs: 6, md: 3 }}>
-            <Typography variant="h6">City</Typography>
-            <Typography variant="body1">{user?.city || '--'}</Typography>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Typography variant="h6" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>City</Typography>
+            <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
+              {user?.city || '--'}
+            </Typography>
           </Grid>
-          <Grid size={{ xs: 6, md: 3 }}>
-            <Typography variant="h6">Gender</Typography>
-            <Typography variant="body1" sx={{ textTransform: 'capitalize' }}>{user?.gender || '--'}</Typography>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Typography variant="h6" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>Gender</Typography>
+            <Typography variant="body1" sx={{ textTransform: 'capitalize', fontSize: { xs: '0.875rem', md: '1rem' } }}>
+              {user?.gender || '--'}
+            </Typography>
           </Grid>
         </Grid>
       </div>
@@ -138,17 +152,21 @@ const PersonalInfo = ({ user, refreshProfile, onToggleEdit }: PersonalInfoProps)
           sx: {
             borderRadius: '12px',
             padding: '8px',
+            m: { xs: 2, md: 3 },
+            maxHeight: { xs: '90vh', md: 'auto' },
           }
         }}
       >
-        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2 }}>
-          <Typography variant="h3">Edit Personal Information</Typography>
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2, px: { xs: 2, md: 3 } }}>
+          <Typography variant="h3" sx={{ fontSize: { xs: '1.25rem', md: '2rem' } }}>
+            Edit Personal Information
+          </Typography>
           <IconButton onClick={handleClose} size="small">
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <form onSubmit={formik.handleSubmit}>
-          <DialogContent>
+          <DialogContent sx={{ px: { xs: 2, md: 3 } }}>
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 6 }}>
                 <InputField
@@ -211,16 +229,16 @@ const PersonalInfo = ({ user, refreshProfile, onToggleEdit }: PersonalInfoProps)
               </Grid>
             </Grid>
           </DialogContent>
-          <DialogActions sx={{ px: 3, pb: 3, gap: 2 }}>
+          <DialogActions sx={{ px: { xs: 2, md: 3 }, pb: 3, gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
             <Button 
-              sx={{ ...outlineButton,height:"50px", width:"160px"}} 
+              sx={{ ...outlineButton, height: "50px", width: { xs: '100%', sm: "160px" } }} 
               onClick={handleClose} 
               disabled={isLoading}
             >
               Cancel
             </Button>
             <Button 
-              sx={{ ...button, width: 'auto', px: 4 }} 
+              sx={{ ...button, width: { xs: '100%', sm: 'auto' }, px: 4 }} 
               type="submit" 
               disabled={isLoading || !formik.isValid}
             >

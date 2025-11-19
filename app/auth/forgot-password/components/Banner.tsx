@@ -15,7 +15,7 @@ const Banner = () => {
         borderBottomRightRadius: '0px',
       }}
     >
-      <div className="absolute inset-0 bg-[#25666e]/70 z-0 md:rounded-tr-[20px] md:rounded-br-[20px]"></div>
+      <div className="absolute inset-0 bg-[#16796f]/70 z-0 md:rounded-tr-[20px] md:rounded-br-[20px]"></div>
       <div className="relative z-10 flex flex-col h-full">
         <Link href="/">
           <div className="w-[60px] h-[60px] md:w-20 md:h-20 cursor-pointer">

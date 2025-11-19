@@ -13,9 +13,10 @@ import { successAlert, errorAlert } from "@/components/ToastGroup"
 interface SkillsProps {
   user: any;
   refreshProfile: () => Promise<void>;
+  isEditMode?: boolean;
 }
 
-const Skills = ({ user, refreshProfile }: SkillsProps) => {
+const Skills = ({ user, refreshProfile, isEditMode = true }: SkillsProps) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const skills = user?.skills || {};
@@ -86,7 +87,7 @@ const Skills = ({ user, refreshProfile }: SkillsProps) => {
   return (
     <>
       <Grid size={{ xs: 12, md: 4 }} sx={{
-        backgroundColor: '#52939b',
+        backgroundColor: '#16796f',
         color: '#fff',
         padding: { xs: '16px', md: '20px' },
         borderRadius: '12px',
@@ -96,15 +97,17 @@ const Skills = ({ user, refreshProfile }: SkillsProps) => {
           <Typography variant="h3" color="white" sx={{ fontSize: { xs: '1.25rem', md: '2rem' } }}>
             Skills
           </Typography>
-          <IconButton 
-            onClick={handleOpen}
-            sx={{ 
-              color: 'white',
-              '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' }
-            }}
-          >
-            <EditIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
-          </IconButton>
+          {isEditMode && (
+            <IconButton
+              onClick={handleOpen}
+              sx={{ 
+                color: 'white',
+                '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' }
+              }}
+            >
+              <EditIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
+            </IconButton>
+          )}
         </div>
         
         {academicSkills.length > 0 && (

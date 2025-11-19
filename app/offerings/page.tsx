@@ -139,11 +139,11 @@ const Offerings = () => {
               left: 0,
               width: '60%',
               height: 3,
-              backgroundColor: '#25666e',
+              backgroundColor: '#16796f',
             }
           }}
         >
-          All <span style={{ color: '#25666e' }}>Offerings</span>
+          All <span style={{ color: '#16796f' }}>Offerings</span>
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
           Browse and select from available offerings
@@ -160,7 +160,7 @@ const Offerings = () => {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon sx={{ color: '#25666e' }} />
+                <SearchIcon sx={{ color: '#16796f' }} />
               </InputAdornment>
             ),
           }}
@@ -172,10 +172,10 @@ const Offerings = () => {
                 borderColor: '#e4e7ec',
               },
               '&:hover fieldset': {
-                borderColor: '#25666e',
+                borderColor: '#16796f',
               },
               '&.Mui-focused fieldset': {
-                borderColor: '#25666e',
+                borderColor: '#16796f',
               },
             },
           }}
@@ -204,12 +204,12 @@ const Offerings = () => {
               label={category}
               onClick={() => setSelectedCategory(category)}
               sx={{
-                backgroundColor: selectedCategory === category ? '#25666e' : '#f8f9fa',
+                backgroundColor: selectedCategory === category ? '#16796f' : '#f8f9fa',
                 color: selectedCategory === category ? '#fff' : '#667085',
                 fontWeight: 600,
                 cursor: 'pointer',
                 '&:hover': {
-                  backgroundColor: selectedCategory === category ? '#1f4f55' : '#e8f0f2',
+                  backgroundColor: selectedCategory === category ? '#125a4f' : '#e8f0f2',
                 },
                 minWidth: 'fit-content',
                 px: 2,

@@ -6,9 +6,9 @@ import { typography as typographyConfig } from './theme/typography';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#25666e',
-      light: '#4a8a92',
-      dark: '#1a4a50',
+      main: '#16796f',
+      light: '#1a8a7a',
+      dark: '#0f4a42',
       contrastText: '#ffffff',
     },
     background: {

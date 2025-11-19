@@ -494,7 +494,7 @@ export const profileService = {
     const result = await parseResponse<any>(response, 'Failed to fetch bookings.');
     
     if (Array.isArray(result)) {
-      return result;
+    return result;
     }
     if (result?.data && Array.isArray(result.data)) {
       return result.data;
@@ -504,6 +504,103 @@ export const profileService = {
     }
     
     return [];
+  },
+
+  // Get user by ID
+  getUserById: async (userId: string): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+
+    return parseResponse<any>(response, 'Failed to fetch user.');
+  },
+
+  // Get booking counts for dashboard
+  getBookingCounts: async (): Promise<any> => {
+    try {
+      const [myBookings, myPending, myRejected, myCompleted, receivedBookings, pendingRequests, rejectedBookings, completedBookings] = await Promise.all([
+        profileService.getMyBookings().catch(() => []),
+        profileService.getMyPendingBookings().catch(() => []),
+        profileService.getMyRejectedBookings().catch(() => []),
+        profileService.getMyCompletedBookings().catch(() => []),
+        profileService.getReceivedBookings().catch(() => []),
+        profileService.getPendingBookings().catch(() => []),
+        profileService.getRejectedBookings().catch(() => []),
+        profileService.getCompletedBookings().catch(() => []),
+      ]);
+
+      return {
+        myBookings: myBookings.length,
+        myPending: myPending.length,
+        myRejected: myRejected.length,
+        myCompleted: myCompleted.length,
+        receivedBookings: receivedBookings.length,
+        pendingRequests: pendingRequests.length,
+        rejectedBookings: rejectedBookings.length,
+        completedBookings: completedBookings.length,
+        totalBookedSessions: receivedBookings.length + completedBookings.length,
+      };
+    } catch (error) {
+      console.error('Failed to fetch booking counts:', error);
+      return {
+        myBookings: 0,
+        myPending: 0,
+        myRejected: 0,
+        myCompleted: 0,
+        receivedBookings: 0,
+        pendingRequests: 0,
+        rejectedBookings: 0,
+        completedBookings: 0,
+        totalBookedSessions: 0,
+      };
+    }
+  },
+
+  // Get total offerings count
+  getTotalOfferingsCount: async (): Promise<number> => {
+    try {
+      const offerings = await profileService.getMyOfferings();
+      return offerings.length;
+    } catch (error) {
+      console.error('Failed to fetch offerings count:', error);
+      return 0;
+    }
+  },
+
+  // Get top offerings by sessions booked
+  getTopOfferings: async (limit: number = 6): Promise<any[]> => {
+    try {
+      const offerings = await profileService.getAllOfferings();
+      // Sort by completedCount (sessions booked) descending
+      const sorted = offerings
+        .filter((off: any) => (off.completedCount || 0) > 0)
+        .sort((a: any, b: any) => (b.completedCount || 0) - (a.completedCount || 0))
+        .slice(0, limit);
+      return sorted;
+    } catch (error) {
+      console.error('Failed to fetch top offerings:', error);
+      return [];
+    }
+  },
+
+  // Get top contributors (users with most offerings)
+  getTopContributors: async (limit: number = 6): Promise<any[]> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      const result = await parseResponse<any>(response, 'Failed to fetch users.');
+      const users = Array.isArray(result) ? result : (result?.data && Array.isArray(result.data) ? result.data : []);
+      
+      // For now, return first N users. In a real app, you'd want to sort by offerings count
+      // This would require backend support to get users with their offering counts
+      return users.slice(0, limit);
+    } catch (error) {
+      console.error('Failed to fetch top contributors:', error);
+      return [];
+    }
   },
 };
 

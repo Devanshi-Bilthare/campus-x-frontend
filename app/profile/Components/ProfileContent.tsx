@@ -16,6 +16,7 @@ import BookedSessions from "./BookedSessions";
 import PendingBookings from "./PendingBookings";
 import CompletedBookings from "./CompletedBookings";
 import RejectedBookings from "./RejectedBookings";
+import OverviewSection from "./OverviewSection";
 
 
 const TABS = [
@@ -82,10 +83,10 @@ const ProfileContent = () => {
               minWidth: { xs: 100, md: 'auto' },
             },
             "& .Mui-selected": {
-              color: "#25666e",
+              color: "#16796f",
             },
             "& .MuiTabs-indicator": {
-              backgroundColor: "#25666e",
+              backgroundColor: "#16796f",
               height: "3px",
             },
             "& .MuiTabs-scrollButtons": {
@@ -108,7 +109,7 @@ const ProfileContent = () => {
 
       <Box sx={{ mt: 4, px: { xs: 2, md: 4 } }}>
         {activeTab === "overview" && (
-          <Box sx={{ minHeight: 200 }} />
+          <OverviewSection user={user} />
         )}
 
         {activeTab === "personal" && (

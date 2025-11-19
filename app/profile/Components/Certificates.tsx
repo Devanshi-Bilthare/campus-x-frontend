@@ -14,9 +14,10 @@ import { successAlert, errorAlert } from "@/components/ToastGroup"
 interface CertificatesProps {
   user: any;
   refreshProfile: () => Promise<void>;
+  isEditMode?: boolean;
 }
 
-const Certificates = ({ user, refreshProfile }: CertificatesProps) => {
+const Certificates = ({ user, refreshProfile, isEditMode = true }: CertificatesProps) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const certificates = user?.certificates || [];
@@ -161,7 +162,7 @@ const Certificates = ({ user, refreshProfile }: CertificatesProps) => {
   return (
     <>
       <Grid size={{ xs: 12, md: 4 }} sx={{
-        backgroundColor: '#52939b',
+        backgroundColor: '#16796f',
         color: '#fff',
         padding: { xs: '16px', md: '20px' },
         borderRadius: '12px',
@@ -173,15 +174,17 @@ const Certificates = ({ user, refreshProfile }: CertificatesProps) => {
           <Typography variant="h3" color="white" sx={{ fontSize: { xs: '1.25rem', md: '2rem' } }}>
             Certificates
           </Typography>
-          <IconButton 
-            onClick={handleOpen}
-            sx={{ 
-              color: 'white',
-              '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' }
-            }}
-          >
-            <EditIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
-          </IconButton>
+          {isEditMode && (
+            <IconButton
+              onClick={handleOpen}
+              sx={{ 
+                color: 'white',
+                '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' }
+              }}
+            >
+              <EditIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
+            </IconButton>
+          )}
         </div>
         
               {certificates.length > 0 ? (

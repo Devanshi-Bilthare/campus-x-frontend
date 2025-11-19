@@ -46,12 +46,12 @@ const ForgotPasswordForm = () => {
         </Alert>
         <Typography variant="body2" color="text.secondary" sx={{ px: { xs: 2, md: 0 } }}>
           Didn't receive the email? Check your spam folder or{" "}
-          <Link href="/auth/forgot-password" sx={{ textDecoration: 'none', color: '#25666e' }}>
+          <Link href="/auth/forgot-password" sx={{ textDecoration: 'none', color: '#16796f' }}>
             try again
           </Link>
         </Typography>
         <Typography variant="body2" color="text.secondary" mt={2}>
-          <Link href="/auth/login" sx={{ textDecoration: 'none', color: '#25666e' }}>
+          <Link href="/auth/login" sx={{ textDecoration: 'none', color: '#16796f' }}>
             Back to Login
           </Link>
         </Typography>
@@ -76,7 +76,7 @@ const ForgotPasswordForm = () => {
             />
           </Grid>
           <Typography variant="body2" color="text.secondary" mt={1}>
-            Remember your password? <Link href="/auth/login" sx={{ textDecoration: 'none', color: '#25666e' }}>Login</Link>
+            Remember your password? <Link href="/auth/login" sx={{ textDecoration: 'none', color: '#16796f' }}>Login</Link>
           </Typography>
           <Button sx={button} type="submit" disabled={isLoading}>
             {isLoading ? 'Sending...' : 'Send Reset Link'}

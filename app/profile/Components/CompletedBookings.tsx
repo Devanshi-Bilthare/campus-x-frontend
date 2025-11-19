@@ -138,7 +138,7 @@ const CompletedBookings = () => {
                       size="small"
                       sx={{
                         backgroundColor: '#e8f5e9',
-                        color: '#25666e',
+                        color: '#16796f',
                         fontWeight: 600,
                         fontSize: '0.75rem',
                         height: 24,
@@ -184,7 +184,7 @@ const CompletedBookings = () => {
                           fontSize: '0.7rem', 
                           height: 22,
                           backgroundColor: '#f0f9ff',
-                          color: '#25666e',
+                          color: '#16796f',
                           border: '1px solid #e0f2fe',
                         }}
                       />
@@ -195,13 +195,13 @@ const CompletedBookings = () => {
                 {/* Duration and Slot */}
                 <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <AccessTimeIcon sx={{ fontSize: 16, color: '#25666e' }} />
+                    <AccessTimeIcon sx={{ fontSize: 16, color: '#16796f' }} />
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
                       {formatDuration(offering.duration)}
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <MenuBookIcon sx={{ fontSize: 16, color: '#25666e' }} />
+                    <MenuBookIcon sx={{ fontSize: 16, color: '#16796f' }} />
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
                       Slot: {formatSlotTime(bookedSlot)}
                     </Typography>
@@ -229,7 +229,7 @@ const CompletedBookings = () => {
                     size="small"
                     sx={{
                       backgroundColor: '#e8f5e9',
-                      color: '#25666e',
+                      color: '#16796f',
                       fontWeight: 500,
                     }}
                   />

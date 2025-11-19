@@ -23,7 +23,7 @@ export default function NotFound() {
             sx={{ 
               fontSize: { xs: '4rem', md: '6rem' },
               fontWeight: 700,
-              color: '#25666e',
+              color: '#16796f',
               mb: 2,
               lineHeight: 1,
             }}
@@ -76,8 +76,8 @@ export default function NotFound() {
                 flex: { xs: 1, sm: 'none' },
                 ":hover": {
                   backgroundColor: '#ffffff',
-                  color: '#25666e',
-                  border: '2px solid #25666e',
+                  color: '#16796f',
+                  border: '2px solid #16796f',
                 }
               }}
             >
@@ -93,10 +93,10 @@ export default function NotFound() {
                 width: { xs: '100%', sm: 'auto' },
                 flex: { xs: 1, sm: 'none' },
                 backgroundColor: 'transparent',
-                color: '#25666e',
-                border: '2px solid #25666e',
+                color: '#16796f',
+                border: '2px solid #16796f',
                 ":hover": {
-                  backgroundColor: '#25666e',
+                  backgroundColor: '#16796f',
                   color: '#ffffff',
                 }
               }}

@@ -99,11 +99,11 @@ const ImageUpload = ({
           variant="contained"
           component="label"
           sx={{
-            backgroundColor: "#25666e",
+            backgroundColor: "#16796f",
             textTransform: "none",
             px: 4,
             py: 1.5,
-            "&:hover": { backgroundColor: "#1f4f55" },
+            "&:hover": { backgroundColor: "#125a4f" },
           }}
         >
           {preview ? "Change Image" : "Upload Image"}

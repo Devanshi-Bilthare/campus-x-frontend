@@ -53,7 +53,7 @@ const Navbar = () => {
                 sx={{
                   width: 32,
                   height: 32,
-                  border: '2px solid #25666e',
+                  border: '2px solid #16796f',
                 }}
               />
               <Typography variant="h6" sx={{ fontWeight: 500 }}>Profile</Typography>
@@ -77,7 +77,7 @@ const Navbar = () => {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ display: { md: 'none' }, color: '#25666e' }}
+            sx={{ display: { md: 'none' }, color: '#16796f' }}
           >
             <MenuIcon />
           </IconButton>
@@ -104,7 +104,7 @@ const Navbar = () => {
         <div className="hidden md:flex gap-8 items-center">
           {navLinks.map((link) => (
             <Link key={link.label} href={link.href} style={{ textDecoration: 'none', color: '#101828' }}>
-              <Typography variant="h6" sx={{ fontWeight: 500, '&:hover': { color: '#25666e' } }}>
+              <Typography variant="h6" sx={{ fontWeight: 500, '&:hover': { color: '#16796f' } }}>
                 {link.label}
               </Typography>
             </Link>
@@ -121,7 +121,7 @@ const Navbar = () => {
                   width: { xs: 32, md: 40 },
                   height: { xs: 32, md: 40 },
                   cursor: 'pointer',
-                  border: '2px solid #25666e',
+                  border: '2px solid #16796f',
                 }}
               />
             </Link>

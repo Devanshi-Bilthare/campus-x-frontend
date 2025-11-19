@@ -111,22 +111,22 @@ export const button = {
   width: '100%',
   height: '50px',
   borderRadius: '8px',
-  backgroundColor: '#25666e',
+  backgroundColor: '#16796f',
   color: '#ffffff',
   '&:hover': {
-    backgroundColor: '#25666e',
+    backgroundColor: '#16796f',
   },
   '&:active': {
-    backgroundColor: '#1a4a50',
+    backgroundColor: '#0f4a42',
   },
   '&:focus': {
-    backgroundColor: '#1a4a50',
+    backgroundColor: '#0f4a42',
   },
   '&:disabled': {
-    backgroundColor: '#1a4a50',
+    backgroundColor: '#0f4a42',
   },
   '&:loading': {
-    backgroundColor: '#1a4a50',
+    backgroundColor: '#0f4a42',
   },
 };
 
@@ -139,6 +139,6 @@ export const outlineButton = {
   textTransform: 'none' as const,
   width: 'max-content',
   borderRadius: '8px',
-  border: '1px solid #25666e',
-  color: '#25666e',
+  border: '1px solid #16796f',
+  color: '#16796f',
 };

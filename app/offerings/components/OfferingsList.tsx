@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Card, CardContent, Typography, Grid, CircularProgress, Chip, Button, Avatar } from "@mui/material";
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { profileService } from '@/app/services/profileService';
 import { successAlert, errorAlert } from '@/components/ToastGroup';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
@@ -194,21 +195,51 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
               <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 2.5 }}>
                 {/* Instructor and Category */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
-                  <Avatar 
-                    src={instructorImage} 
-                    alt={instructorName}
-                    sx={{ width: 32, height: 32 }}
-                  />
-                  <Typography variant="body2" sx={{ flex: 1, fontWeight: 500, color: '#667085' }}>
-                    {instructorName}
-                  </Typography>
+                  {instructor._id || instructor.id ? (
+                    <Link 
+                      href={`/profile/${instructor._id || instructor.id}`}
+                      style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}
+                    >
+                      <Avatar 
+                        src={instructorImage} 
+                        alt={instructorName}
+                        sx={{ width: 32, height: 32, cursor: 'pointer' }}
+                      />
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          flex: 1, 
+                          fontWeight: 500, 
+                          color: '#667085',
+                          cursor: 'pointer',
+                          '&:hover': {
+                            color: '#16796f',
+                            textDecoration: 'underline',
+                          },
+                        }}
+                      >
+                        {instructorName}
+                      </Typography>
+                    </Link>
+                  ) : (
+                    <>
+                      <Avatar 
+                        src={instructorImage} 
+                        alt={instructorName}
+                        sx={{ width: 32, height: 32 }}
+                      />
+                      <Typography variant="body2" sx={{ flex: 1, fontWeight: 500, color: '#667085' }}>
+                        {instructorName}
+                      </Typography>
+                    </>
+                  )}
                   {firstTag && (
                     <Chip
                       label={firstTag}
                       size="small"
                       sx={{
                         backgroundColor: '#e8f5e9',
-                        color: '#25666e',
+                        color: '#16796f',
                         fontWeight: 600,
                         fontSize: '0.75rem',
                         height: 24,
@@ -254,7 +285,7 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
                           fontSize: '0.7rem', 
                           height: 22,
                           backgroundColor: '#f0f9ff',
-                          color: '#25666e',
+                          color: '#16796f',
                           border: '1px solid #e0f2fe',
                         }}
                       />
@@ -265,13 +296,13 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
                 {/* Duration and Slot Count */}
                 <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <AccessTimeIcon sx={{ fontSize: 16, color: '#25666e' }} />
+                    <AccessTimeIcon sx={{ fontSize: 16, color: '#16796f' }} />
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
                       {formatDuration(off.duration)}
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <MenuBookIcon sx={{ fontSize: 16, color: '#25666e' }} />
+                    <MenuBookIcon sx={{ fontSize: 16, color: '#16796f' }} />
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
                       {slotCount === 1 ? 'One slot' : `${slotCount} slots`}
                     </Typography>
@@ -299,14 +330,14 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
                               py: 0.75,
                               fontSize: '0.8rem',
                               textTransform: 'none',
-                              backgroundColor: isSelected ? '#25666e' : 'transparent',
-                              color: isSelected ? '#fff' : '#25666e',
-                              borderColor: isSelected ? '#25666e' : '#e4e7ec',
+                              backgroundColor: isSelected ? '#16796f' : 'transparent',
+                              color: isSelected ? '#fff' : '#16796f',
+                              borderColor: isSelected ? '#16796f' : '#e4e7ec',
                               borderWidth: isSelected ? 2 : 1,
                               fontWeight: isSelected ? 600 : 500,
                               '&:hover': {
-                                backgroundColor: isSelected ? '#1f4f55' : 'rgba(37, 102, 110, 0.08)',
-                                borderColor: '#25666e',
+                                backgroundColor: isSelected ? '#125a4f' : 'rgba(22, 121, 111, 0.08)',
+                                borderColor: '#16796f',
                                 borderWidth: 2,
                               },
                             }}
@@ -322,7 +353,7 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
                 {/* Sessions Booked */}
                 {off.completedCount !== undefined && off.completedCount > 0 && (
                   <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2" sx={{ color: '#25666e', fontWeight: 500 }}>
+                    <Typography variant="body2" sx={{ color: '#16796f', fontWeight: 500 }}>
                       {off.completedCount} Session{off.completedCount !== 1 ? 's' : ''} booked
                     </Typography>
                   </Box>
@@ -338,14 +369,14 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
                     disabled={bookingLoading[off._id] || !selectedSlot}
                     sx={{
                       mt: 'auto',
-                      backgroundColor: '#25666e',
+                      backgroundColor: '#16796f',
                       color: '#fff',
                       textTransform: 'none',
                       fontWeight: 600,
                       py: 1.25,
                       borderRadius: 1.5,
                       '&:hover': {
-                        backgroundColor: '#1f4f55',
+                        backgroundColor: '#125a4f',
                       },
                       '&:disabled': {
                         backgroundColor: '#e4e7ec',

@@ -117,7 +117,7 @@ const ProfileBanner = ({ user, refreshProfile }: ProfileBannerProps) => {
               <EditIcon sx={{ fontSize: { xs: 16, md: 18 } }} />
             </IconButton>
           </div>
-          <div className="mt-0 sm:mt-10 text-center sm:text-left">
+          <div className=" md:mt-18 text-center sm:text-left">
             <Typography variant="h6" sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}>
               {user?.fullName || "User"}
             </Typography>

@@ -1,25 +1,54 @@
 'use client';
 
-import { useState, SyntheticEvent } from "react";
-import { Grid, Box, CircularProgress, Tabs, Tab, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { useState, SyntheticEvent, useEffect } from "react";
+import { Grid, Box, CircularProgress, Tabs, Tab, Stack, useMediaQuery, useTheme, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { useSearchParams } from 'next/navigation';
 import ProfileBanner from "./ProfileBanner";
 import PersonalInfo from "./PersonalInfo";
 import AcadimicDetails from "./AcadimicDetails";
 import Skills from "./Skills";
 import Certificates from "./Certificates";
 import { useProfile } from "../hooks/useProfile";
+import ProfileOfferings from "@/app/offerings/components/ProfileOfferings";
+import AddOfferings from "@/app/offerings/components/AddOfferings";
+import MyBookings from "./MyBookings";
+import BookedSessions from "./BookedSessions";
+import PendingBookings from "./PendingBookings";
+import CompletedBookings from "./CompletedBookings";
+import RejectedBookings from "./RejectedBookings";
+
 
 const TABS = [
   { label: "Overview", value: "overview" },
   { label: "Offerings", value: "offerings" },
+  { label: "My Bookings", value: "my-bookings" },
+  { label: "Booked Sessions", value: "booked-sessions" },
+  { label: "Pending", value: "pending" },
+  { label: "Rejected", value: "rejected" },
+  { label: "Completed", value: "completed" },
   { label: "Personal Info", value: "personal" },
 ];
 
 const ProfileContent = () => {
   const { user, isLoading, refreshProfile } = useProfile();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState("overview");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [openModal, setOpenModal] = useState(false);
+  const [offeringsRefreshKey, setOfferingsRefreshKey] = useState(0);
+
+  // Check for tab query parameter
+  useEffect(() => {
+    const tabParam = searchParams?.get('tab');
+    if (tabParam && TABS.some(tab => tab.value === tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
+
+  const triggerOfferingsRefresh = () => {
+    setOfferingsRefreshKey((prev) => prev + 1);
+  };
 
   const handleTabChange = (_: SyntheticEvent, newValue: string) => {
     setActiveTab(newValue);
@@ -94,7 +123,61 @@ const ProfileContent = () => {
         )}
 
         {activeTab === "offerings" && (
-          <Box sx={{ minHeight: 200 }} />
+          <Box sx={{ minHeight: 200, position: "relative" }}>
+            {/* Add Offering Button on top right */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+              <Button variant="contained" color="primary" onClick={() => setOpenModal(true)}>
+                Add Offering
+              </Button>
+            </Box>
+
+            {/* Offerings List */}
+            <ProfileOfferings refreshKey={offeringsRefreshKey} />
+
+            {/* Modal */}
+            <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth maxWidth="sm">
+              <DialogTitle>Add New Offering</DialogTitle>
+              <DialogContent>
+                <AddOfferings
+                  closeModal={() => setOpenModal(false)}
+                  onAdded={triggerOfferingsRefresh}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpenModal(false)}>Cancel</Button>
+              </DialogActions>
+            </Dialog>
+          </Box>
+        )}
+
+        {activeTab === "my-bookings" && (
+          <Box sx={{ minHeight: 200 }}>
+            <MyBookings />
+          </Box>
+        )}
+
+        {activeTab === "booked-sessions" && (
+          <Box sx={{ minHeight: 200 }}>
+            <BookedSessions />
+          </Box>
+        )}
+
+        {activeTab === "pending" && (
+          <Box sx={{ minHeight: 200 }}>
+            <PendingBookings />
+          </Box>
+        )}
+
+        {activeTab === "rejected" && (
+          <Box sx={{ minHeight: 200 }}>
+            <RejectedBookings />
+          </Box>
+        )}
+
+        {activeTab === "completed" && (
+          <Box sx={{ minHeight: 200 }}>
+            <CompletedBookings />
+          </Box>
         )}
       </Box>
     </div>

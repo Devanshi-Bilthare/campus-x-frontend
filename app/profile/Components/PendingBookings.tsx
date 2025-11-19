@@ -120,9 +120,13 @@ const PendingBookings = () => {
       {bookings.map((booking) => {
         const offering = booking.offeringId || booking.offering || {};
         const isReceived = booking.type === 'received' || !booking.userId;
-        const otherUser = isReceived 
-          ? (booking.userId || booking.user || {})
-          : (offering.userId || offering.user || {});
+        
+        // For received requests, show the student who requested
+        // For sent requests, show the instructor (offering owner) - using offeringOwnerId (populated by backend)
+        const student = booking.userId || booking.user || {};
+        const instructor = booking.offeringOwnerId || offering.userId || offering.user || {};
+        console.log(booking);
+        const otherUser = isReceived ? student : instructor;
         const otherUserName = otherUser.fullName || otherUser.username || (isReceived ? 'Student' : 'Instructor');
         const otherUserImage = otherUser.profilePicture || otherUser.profileImage || '/auth/profile.png';
         const firstTag = offering.tags && offering.tags.length > 0 ? offering.tags[0] : null;
@@ -143,15 +147,15 @@ const PendingBookings = () => {
                 </Box>
               )}
               <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 2.5 }}>
-                {/* User and Category */}
+                {/* Instructor and Category */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
                   <Avatar 
-                    src={otherUserImage} 
-                    alt={otherUserName}
+                    src={instructor.profilePicture || instructor.profileImage || '/auth/profile.png'} 
+                    alt={instructor.fullName || instructor.username || 'Instructor'}
                     sx={{ width: 32, height: 32 }}
                   />
                   <Typography variant="body2" sx={{ flex: 1, fontWeight: 500, color: '#667085' }}>
-                    {isReceived ? `Requested by: ${otherUserName}` : otherUserName}
+                    {instructor.fullName || instructor.username || 'Instructor'}
                   </Typography>
                   {firstTag && (
                     <Chip
@@ -228,6 +232,21 @@ const PendingBookings = () => {
                     </Typography>
                   </Box>
                 </Box>
+
+                {/* Requested by Student (if received) */}
+                {isReceived && (
+                  <Box sx={{ mb: 2, p: 1, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', display: 'block', mb: 0.5 }}>
+                      Requested by:
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Avatar src={student.profilePicture || student.profileImage || '/auth/profile.png'} alt={student.fullName || student.username || 'Student'} sx={{ width: 24, height: 24 }} />
+                      <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
+                        {student.fullName || student.username || 'Student'}
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
 
                 {/* Status and Actions */}
                 <Box sx={{ mt: 'auto', pt: 1 }}>

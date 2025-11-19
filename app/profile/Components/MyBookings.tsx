@@ -83,7 +83,9 @@ const MyBookings = () => {
     <Grid container spacing={2}>
       {bookings.map((booking) => {
         const offering = booking.offeringId || booking.offering || {};
-        const instructor = offering.userId || offering.user || {};
+        // Get instructor from offeringOwnerId (populated by backend with fullName, username, profilePicture)
+        // Fallback to offering.userId if offeringOwnerId is not available
+        const instructor = booking.offeringOwnerId || offering.userId || offering.user || {};
         const instructorName = instructor.fullName || instructor.username || 'Instructor';
         const instructorImage = instructor.profilePicture || instructor.profileImage || '/auth/profile.png';
         const firstTag = offering.tags && offering.tags.length > 0 ? offering.tags[0] : null;

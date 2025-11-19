@@ -76,7 +76,7 @@ const LoginForm = () => {
         </Grid>
         <Grid size={{ xs: 12 }}>
           <Typography variant="body2" sx={{ textAlign: 'right', mb: 1 }}>
-            <Link href="/auth/forgot-password" sx={{ textDecoration: 'none', color: '#25666e' }}>
+            <Link href="/auth/forgot-password" sx={{ textDecoration: 'none', color: '#16796f' }}>
               Forgot Password?
             </Link>
           </Typography>

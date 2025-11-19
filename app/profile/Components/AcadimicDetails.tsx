@@ -15,9 +15,10 @@ import { successAlert, errorAlert } from "@/components/ToastGroup"
 interface AcadimicDetailsProps {
   user: any;
   refreshProfile: () => Promise<void>;
+  isEditMode?: boolean;
 }
 
-const AcadimicDetails = ({ user, refreshProfile }: AcadimicDetailsProps) => {
+const AcadimicDetails = ({ user, refreshProfile, isEditMode = true }: AcadimicDetailsProps) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const academics = user?.academics || {};
@@ -106,7 +107,7 @@ const AcadimicDetails = ({ user, refreshProfile }: AcadimicDetailsProps) => {
   return (
     <>
       <Grid size={{ xs: 12, md: 4 }} sx={{
-        backgroundColor: '#52939b',
+        backgroundColor: '#16796f',
         color: '#fff',
         padding: { xs: '16px', md: '20px' },
         borderRadius: '12px',
@@ -116,15 +117,17 @@ const AcadimicDetails = ({ user, refreshProfile }: AcadimicDetailsProps) => {
           <Typography variant="h3" color="white" sx={{ fontSize: { xs: '1.25rem', md: '2rem' } }}>
             Academic Details
           </Typography>
-          <IconButton 
-            onClick={handleOpen}
-            sx={{ 
-              color: 'white',
-              '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' }
-            }}
-          >
-            <EditIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
-          </IconButton>
+          {isEditMode && (
+            <IconButton
+              onClick={handleOpen}
+              sx={{ 
+                color: 'white',
+                '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' }
+              }}
+            >
+              <EditIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
+            </IconButton>
+          )}
         </div>
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-3 border-b border-white/30 pb-2 gap-1">
           <Typography variant="body1" color="white" sx={{ opacity: 0.9, fontSize: { xs: '0.875rem', md: '1rem' } }}>

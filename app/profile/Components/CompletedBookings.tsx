@@ -94,11 +94,16 @@ const CompletedBookings = () => {
       {bookings.map((booking) => {
         const offering = booking.offeringId || booking.offering || {};
         const isMyBooking = booking.type === 'sent' || booking.userId;
-        const otherUser = isMyBooking
-          ? (offering.userId || offering.user || {})
-          : (booking.userId || booking.user || {});
-        const otherUserName = otherUser.fullName || otherUser.username || (isMyBooking ? 'Instructor' : 'Student');
-        const otherUserImage = otherUser.profilePicture || otherUser.profileImage || '/auth/profile.png';
+        
+        // Get instructor from offeringOwnerId (populated by backend)
+        const instructor = booking.offeringOwnerId || offering.userId || offering.user || {};
+        const instructorName = instructor.fullName || instructor.username || 'Instructor';
+        const instructorImage = instructor.profilePicture || instructor.profileImage || '/auth/profile.png';
+        
+        // Get student who booked
+        const student = booking.userId || booking.user || {};
+        const studentName = student.fullName || student.username || 'Student';
+        const studentImage = student.profilePicture || student.profileImage || '/auth/profile.png';
         const firstTag = offering.tags && offering.tags.length > 0 ? offering.tags[0] : null;
         const bookedSlot = booking.slot || (booking.slots && booking.slots[0]) || 'N/A';
         
@@ -117,15 +122,15 @@ const CompletedBookings = () => {
                 </Box>
               )}
               <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 2.5 }}>
-                {/* User and Category */}
+                {/* Instructor and Category */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
                   <Avatar 
-                    src={otherUserImage} 
-                    alt={otherUserName}
+                    src={instructorImage} 
+                    alt={instructorName}
                     sx={{ width: 32, height: 32 }}
                   />
                   <Typography variant="body2" sx={{ flex: 1, fontWeight: 500, color: '#667085' }}>
-                    {isMyBooking ? `Offering by: ${otherUserName}` : `Booked by: ${otherUserName}`}
+                    {instructorName}
                   </Typography>
                   {firstTag && (
                     <Chip
@@ -133,7 +138,7 @@ const CompletedBookings = () => {
                       size="small"
                       sx={{
                         backgroundColor: '#e8f5e9',
-                        color: '#25666e',
+                        color: '#16796f',
                         fontWeight: 600,
                         fontSize: '0.75rem',
                         height: 24,
@@ -179,7 +184,7 @@ const CompletedBookings = () => {
                           fontSize: '0.7rem', 
                           height: 22,
                           backgroundColor: '#f0f9ff',
-                          color: '#25666e',
+                          color: '#16796f',
                           border: '1px solid #e0f2fe',
                         }}
                       />
@@ -190,15 +195,28 @@ const CompletedBookings = () => {
                 {/* Duration and Slot */}
                 <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <AccessTimeIcon sx={{ fontSize: 16, color: '#25666e' }} />
+                    <AccessTimeIcon sx={{ fontSize: 16, color: '#16796f' }} />
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
                       {formatDuration(offering.duration)}
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <MenuBookIcon sx={{ fontSize: 16, color: '#25666e' }} />
+                    <MenuBookIcon sx={{ fontSize: 16, color: '#16796f' }} />
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
                       Slot: {formatSlotTime(bookedSlot)}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                {/* Booked by Student */}
+                <Box sx={{ mb: 2, p: 1, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', display: 'block', mb: 0.5 }}>
+                    Booked by:
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Avatar src={studentImage} alt={studentName} sx={{ width: 24, height: 24 }} />
+                    <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
+                      {studentName}
                     </Typography>
                   </Box>
                 </Box>
@@ -211,7 +229,7 @@ const CompletedBookings = () => {
                     size="small"
                     sx={{
                       backgroundColor: '#e8f5e9',
-                      color: '#25666e',
+                      color: '#16796f',
                       fontWeight: 500,
                     }}
                   />

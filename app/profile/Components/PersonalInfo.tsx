@@ -19,7 +19,7 @@ interface PersonalInfoProps {
   onToggleEdit?: () => void;
 }
 
-const PersonalInfo = ({ user, refreshProfile, onToggleEdit }: PersonalInfoProps) => {
+const PersonalInfo = ({ user, refreshProfile, onToggleEdit, isEditMode = true }: PersonalInfoProps) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
@@ -99,9 +99,11 @@ const PersonalInfo = ({ user, refreshProfile, onToggleEdit }: PersonalInfoProps)
           <Typography variant="h3" sx={{ fontSize: { xs: '1.5rem', md: '2rem' } }}>
             Personal Information
           </Typography>
-          <Button sx={{ ...outlineButton, width: { xs: '100%', sm: 'auto' } }} onClick={handleOpen}>
-            <EditIcon sx={{ fontSize: 20, mr: 1 }} /> Edit
-          </Button>
+          {isEditMode && (
+            <Button sx={{ ...outlineButton, width: { xs: '100%', sm: 'auto' } }} onClick={handleOpen}>
+              <EditIcon sx={{ fontSize: 20, mr: 1 }} /> Edit
+            </Button>
+          )}
         </div>
         <Grid container spacing={2} mt={2}>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>

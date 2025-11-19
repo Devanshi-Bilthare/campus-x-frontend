@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Card, CardContent, Typography, Grid, CircularProgress, Chip, Avatar } from "@mui/material";
 import Image from 'next/image';
+import Link from 'next/link';
 import { profileService } from '@/app/services/profileService';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
@@ -83,7 +84,9 @@ const MyBookings = () => {
     <Grid container spacing={2}>
       {bookings.map((booking) => {
         const offering = booking.offeringId || booking.offering || {};
-        const instructor = offering.userId || offering.user || {};
+        // Get instructor from offeringOwnerId (populated by backend with fullName, username, profilePicture)
+        // Fallback to offering.userId if offeringOwnerId is not available
+        const instructor = booking.offeringOwnerId || offering.userId || offering.user || {};
         const instructorName = instructor.fullName || instructor.username || 'Instructor';
         const instructorImage = instructor.profilePicture || instructor.profileImage || '/auth/profile.png';
         const firstTag = offering.tags && offering.tags.length > 0 ? offering.tags[0] : null;
@@ -106,21 +109,51 @@ const MyBookings = () => {
               <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 2.5 }}>
                 {/* Instructor and Category */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
-                  <Avatar 
-                    src={instructorImage} 
-                    alt={instructorName}
-                    sx={{ width: 32, height: 32 }}
-                  />
-                  <Typography variant="body2" sx={{ flex: 1, fontWeight: 500, color: '#667085' }}>
-                    {instructorName}
-                  </Typography>
+                  {instructor._id || instructor.id ? (
+                    <Link 
+                      href={`/profile/${instructor._id || instructor.id}`}
+                      style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}
+                    >
+                      <Avatar 
+                        src={instructorImage} 
+                        alt={instructorName}
+                        sx={{ width: 32, height: 32, cursor: 'pointer' }}
+                      />
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          flex: 1, 
+                          fontWeight: 500, 
+                          color: '#667085',
+                          cursor: 'pointer',
+                          '&:hover': {
+                            color: '#16796f',
+                            textDecoration: 'underline',
+                          },
+                        }}
+                      >
+                        {instructorName}
+                      </Typography>
+                    </Link>
+                  ) : (
+                    <>
+                      <Avatar 
+                        src={instructorImage} 
+                        alt={instructorName}
+                        sx={{ width: 32, height: 32 }}
+                      />
+                      <Typography variant="body2" sx={{ flex: 1, fontWeight: 500, color: '#667085' }}>
+                        {instructorName}
+                      </Typography>
+                    </>
+                  )}
                   {firstTag && (
                     <Chip
                       label={firstTag}
                       size="small"
                       sx={{
                         backgroundColor: '#e8f5e9',
-                        color: '#25666e',
+                        color: '#16796f',
                         fontWeight: 600,
                         fontSize: '0.75rem',
                         height: 24,
@@ -166,7 +199,7 @@ const MyBookings = () => {
                           fontSize: '0.7rem', 
                           height: 22,
                           backgroundColor: '#f0f9ff',
-                          color: '#25666e',
+                          color: '#16796f',
                           border: '1px solid #e0f2fe',
                         }}
                       />
@@ -177,13 +210,13 @@ const MyBookings = () => {
                 {/* Duration and Slot */}
                 <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <AccessTimeIcon sx={{ fontSize: 16, color: '#25666e' }} />
+                    <AccessTimeIcon sx={{ fontSize: 16, color: '#16796f' }} />
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
                       {formatDuration(offering.duration)}
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <MenuBookIcon sx={{ fontSize: 16, color: '#25666e' }} />
+                    <MenuBookIcon sx={{ fontSize: 16, color: '#16796f' }} />
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
                       Slot: {formatSlotTime(bookedSlot)}
                     </Typography>

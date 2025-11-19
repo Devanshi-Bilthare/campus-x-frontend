@@ -109,7 +109,7 @@ const ResetPasswordForm = () => {
             />
           </Grid>
           <Typography variant="body2" color="text.secondary" mt={1}>
-            Remember your password? <Link href="/auth/login" sx={{ textDecoration: 'none', color: '#25666e' }}>Login</Link>
+            Remember your password? <Link href="/auth/login" sx={{ textDecoration: 'none', color: '#16796f' }}>Login</Link>
           </Typography>
           <Button sx={button} type="submit" disabled={!token || isLoading}>
             {isLoading ? 'Resetting...' : 'Reset Password'}

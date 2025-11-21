@@ -1,41 +1,38 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Box, Card, CardContent, Typography, Grid, CircularProgress, Chip, Avatar, Button } from "@mui/material";
+import { Box, Card, CardContent, Typography, Grid, CircularProgress, Chip, Avatar } from "@mui/material";
 import Image from 'next/image';
 import { profileService } from '@/app/services/profileService';
-import { successAlert, errorAlert } from '@/components/ToastGroup';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
-
-interface BookedSessionsProps {
-  onStatusUpdate?: () => void; // Callback to refresh parent component
-}
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
-const BookedSessions = ({ onStatusUpdate }: BookedSessionsProps = {}) => {
+const CanceledBookings = () => {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [updating, setUpdating] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const fetchBookings = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await profileService.getBookedSessions();
-        // Filter to show only accepted but not completed
-        const filtered = data.filter((b: any) => {
-          const status = b.status?.toLowerCase();
-          return status === 'accepted' || status === 'approved';
-        });
-        setBookings(filtered);
+        // Get both cancelled bookings I made and cancelled bookings for my offerings
+        const [myCancelled, receivedCancelled] = await Promise.all([
+          profileService.getMyCancelledBookings(),
+          profileService.getCancelledBookings().catch(() => [])
+        ]);
+        
+        // Mark bookings I made vs received
+        const myCancelledMarked = myCancelled.map((b: any) => ({ ...b, type: 'sent' }));
+        const receivedCancelledMarked = receivedCancelled.map((b: any) => ({ ...b, type: 'received' }));
+        
+        setBookings([...myCancelledMarked, ...receivedCancelledMarked]);
       } catch (error) {
-        console.error('Failed to fetch booked sessions:', error);
-        setError('Failed to load booked sessions');
+        console.error('Failed to fetch cancelled bookings:', error);
+        setError('Failed to load cancelled bookings');
       } finally {
         setLoading(false);
       }
@@ -43,44 +40,21 @@ const BookedSessions = ({ onStatusUpdate }: BookedSessionsProps = {}) => {
     fetchBookings();
   }, []);
 
-  const handleStatusUpdate = async (bookingId: string, status: string) => {
-    setUpdating(prev => ({ ...prev, [bookingId]: true }));
-    try {
-      await profileService.updateBookingStatus(bookingId, status);
-      const statusMessage = status === 'completed' ? 'marked as completed' : status;
-      successAlert(`Booking ${statusMessage} successfully!`, 'top-right');
-      
-      // Refresh profile to update coins if booking was completed
-      if (status === 'completed') {
-        try {
-          const profileData = await profileService.getProfile();
-          if (profileData.success && profileData.data) {
-            localStorage.setItem('user', JSON.stringify(profileData.data));
-            // Dispatch event to update navbar and other components
-            window.dispatchEvent(new Event('userUpdated'));
-          }
-        } catch (error) {
-          console.error('Failed to refresh profile:', error);
-        }
-      }
-      
-      const data = await profileService.getBookedSessions();
-      const filtered = data.filter((b: any) => {
-        const bookingStatus = b.status?.toLowerCase();
-        return (bookingStatus === 'accepted' || bookingStatus === 'approved') && bookingStatus !== 'completed';
-      });
-      setBookings(filtered);
-      
-      // Notify parent component to refresh
-      if (onStatusUpdate) {
-        onStatusUpdate();
-      }
-    } catch (error: any) {
-      errorAlert(error.message || 'Failed to update booking', 'top-right');
-    } finally {
-      setUpdating(prev => ({ ...prev, [bookingId]: false }));
-    }
-  };
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
+        <Typography color="error">{error}</Typography>
+      </Box>
+    );
+  }
 
   const capitalizeFirstLetter = (str: string) => {
     if (!str) return str;
@@ -118,26 +92,10 @@ const BookedSessions = ({ onStatusUpdate }: BookedSessionsProps = {}) => {
     });
   };
 
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
-        <Typography color="error">{error}</Typography>
-      </Box>
-    );
-  }
-
   if (!bookings.length) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
-        <Typography color="text.secondary">No booked sessions found</Typography>
+        <Typography color="text.secondary">No cancelled bookings found</Typography>
       </Box>
     );
   }
@@ -146,14 +104,17 @@ const BookedSessions = ({ onStatusUpdate }: BookedSessionsProps = {}) => {
     <Grid container spacing={2}>
       {bookings.map((booking) => {
         const offering = booking.offeringId || booking.offering || {};
-        // Show the student who booked the session
-        const student = booking.userId || booking.user || {};
-        const studentName = student.fullName || student.username || 'Student';
-        const studentImage = student.profilePicture || student.profileImage || '/auth/profile.png';
+        const isMyBooking = booking.type === 'sent';
+        
         // Get instructor from offeringOwnerId (populated by backend)
         const instructor = booking.offeringOwnerId || offering.userId || offering.user || {};
         const instructorName = instructor.fullName || instructor.username || 'Instructor';
         const instructorImage = instructor.profilePicture || instructor.profileImage || '/auth/profile.png';
+        
+        // Get student who booked
+        const student = booking.userId || booking.user || {};
+        const studentName = student.fullName || student.username || 'Student';
+        const studentImage = student.profilePicture || student.profileImage || '/auth/profile.png';
         const firstTag = offering.tags && offering.tags.length > 0 ? offering.tags[0] : null;
         const bookedSlot = booking.slot || (booking.slots && booking.slots[0]) || 'N/A';
         
@@ -279,51 +240,35 @@ const BookedSessions = ({ onStatusUpdate }: BookedSessionsProps = {}) => {
                   </Box>
                 </Box>
 
-                {/* Status and Actions */}
+                {/* Cancellation Reason */}
+                {booking.cancellationReason && (
+                  <Box sx={{ mb: 2, p: 1, backgroundColor: '#fff3e0', borderRadius: 1 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', display: 'block', mb: 0.5 }}>
+                      Cancellation Reason:
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontSize: '0.875rem', color: '#f57c00' }}>
+                      {booking.cancellationReason}
+                    </Typography>
+                  </Box>
+                )}
+
+                {/* Status */}
                 <Box sx={{ mt: 'auto', pt: 1 }}>
                   <Chip
-                    label={booking.status || 'Accepted'}
+                    icon={<CancelIcon />}
+                    label="Cancelled"
                     size="small"
                     sx={{
-                      backgroundColor: '#e3f2fd',
-                      color: '#1976d2',
+                      backgroundColor: '#fff3e0',
+                      color: '#f57c00',
                       fontWeight: 500,
-                      mb: 1,
                     }}
                   />
-                  <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      startIcon={<CheckCircleIcon />}
-                      onClick={() => handleStatusUpdate(booking._id, 'completed')}
-                      disabled={updating[booking._id]}
-                      sx={{
-                        backgroundColor: '#16796f',
-                        textTransform: 'none',
-                        flexGrow: 1,
-                        '&:hover': { backgroundColor: '#125a4f' },
-                      }}
-                    >
-                      Mark Complete
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      startIcon={<CancelIcon />}
-                      onClick={() => handleStatusUpdate(booking._id, 'rejected')}
-                      disabled={updating[booking._id]}
-                      sx={{
-                        borderColor: '#d32f2f',
-                        color: '#d32f2f',
-                        textTransform: 'none',
-                        flexGrow: 1,
-                        '&:hover': { borderColor: '#c62828', backgroundColor: 'rgba(211, 47, 47, 0.04)' },
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  </Box>
+                  {booking.updatedAt && (
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+                      Cancelled on: {new Date(booking.updatedAt).toLocaleDateString()}
+                    </Typography>
+                  )}
                 </Box>
               </CardContent>
             </Card>
@@ -334,5 +279,5 @@ const BookedSessions = ({ onStatusUpdate }: BookedSessionsProps = {}) => {
   );
 };
 
-export default BookedSessions;
+export default CanceledBookings;
 

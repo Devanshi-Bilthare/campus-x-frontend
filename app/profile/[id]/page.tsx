@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Box, CircularProgress, Typography } from "@mui/material";
-import UserProfileContent from "./UserProfileContent";
+import UserProfileContentWrapper from "./UserProfileContentWrapper";
 import { profileService } from "@/app/services/profileService";
 
 const UserProfilePage = () => {
@@ -56,7 +56,7 @@ const UserProfilePage = () => {
     );
   }
 
-  return <UserProfileContent user={user} />;
+  return <UserProfileContentWrapper user={user} />;
 };
 
 const UserProfilePageWrapper = () => {

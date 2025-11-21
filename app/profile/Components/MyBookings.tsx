@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { profileService } from '@/app/services/profileService';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -54,6 +55,16 @@ const MyBookings = () => {
       return slot;
     }
     return capitalizeFirstLetter(slot);
+  };
+
+  const formatDate = (date: string | Date) => {
+    if (!date) return 'N/A';
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
   };
 
   if (loading) {
@@ -207,8 +218,8 @@ const MyBookings = () => {
                   </Box>
                 )}
 
-                {/* Duration and Slot */}
-                <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                {/* Duration, Slot, and Date */}
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <AccessTimeIcon sx={{ fontSize: 16, color: '#16796f' }} />
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
@@ -221,6 +232,14 @@ const MyBookings = () => {
                       Slot: {formatSlotTime(bookedSlot)}
                     </Typography>
                   </Box>
+                  {booking.date && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <CalendarTodayIcon sx={{ fontSize: 16, color: '#16796f' }} />
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
+                        {formatDate(booking.date)}
+                      </Typography>
+                    </Box>
+                  )}
                 </Box>
 
                 {/* Status */}

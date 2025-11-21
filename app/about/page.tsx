@@ -9,12 +9,10 @@ import {
   Grid, 
   Card, 
   CardContent,
-  Avatar,
   Stack,
   CircularProgress
 } from '@mui/material';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PeopleIcon from '@mui/icons-material/People';
@@ -23,6 +21,10 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import StarIcon from '@mui/icons-material/Star';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import PersonIcon from '@mui/icons-material/Person';
+import RateReviewIcon from '@mui/icons-material/RateReview';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import GroupsIcon from '@mui/icons-material/Groups';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import { profileService } from '../services/profileService';
 
 export default function About() {
@@ -71,279 +73,325 @@ export default function About() {
       {/* Hero Section */}
       <Box
         sx={{
-        //   background: 'linear-gradient(135deg, #16796f 0%, #0f4a42 100%)',
-          color: '#fff',
-          py: { xs: 8, md: 12 },
           position: 'relative',
+          py: { xs: 6, md: 10 },
+          px: { xs: 2, md: 4 },
           overflow: 'hidden',
+          minHeight: { xs: 400, md: 550 },
         }}
       >
-        <Container maxWidth="xl">
-          <Grid container spacing={4} alignItems="center">
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Typography
-                variant="h1"
-                sx={{
-                  fontSize: { xs: '2.5rem', md: '4rem' },
-                  fontWeight: 700,
-                  mb: 3,
-                  lineHeight: 1.2,
-                  color: '#16796f',
-                }}
-              >
-                90% Students Choose Instructors with Better Reviews
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  fontSize: { xs: '1rem', md: '1.25rem' },
-                  mb: 4,
-                  color: '#16796f',
-                  lineHeight: 1.6,
-                }}
-              >
-                Join our platform to connect with expert instructors, book personalized learning sessions, 
-                and grow your skills through quality education and mentorship.
-              </Typography>
-              <Button
-                variant="contained"
-                size="large"
-                onClick={() => router.push('/offerings')}
-                sx={{
-                  backgroundColor: '#1a8a7a',
-                  color: '#fff',
-                  px: 4,
-                  py: 1.5,
-                  fontSize: '1rem',
-                  fontWeight: 600,
-                  textTransform: 'none',
-                  borderRadius: 2,
-                  '&:hover': {
-                    backgroundColor: '#5a9aa2',
-                  },
-                }}
-              >
-                Find Instructors
-              </Button>
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Box
-                sx={{
-                  position: 'relative',
-                  height: { xs: 300, md: 500 },
-                  borderRadius: 4,
-                  overflow: 'hidden',
-                }}
-              >
-                <Image
-                  src="https://plus.unsplash.com/premium_vector-1714618947775-73eebc939856?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE4fHx8ZW58MHx8fHx8"
-                  alt="Hero - Students choosing instructors"
-                  fill
-                  style={{ objectFit: 'contain' }}
-                  unoptimized
-                />
-              </Box>
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
-
-      {/* Partnership/Integration Section */}
-      <Box sx={{ bgcolor: '#f8fafc', py: 4 }}>
-        <Container maxWidth="lg">
-          <Typography
-            variant="h6"
-            sx={{
-              textAlign: 'center',
-              mb: 4,
-              color: '#667085',
-              fontWeight: 500,
-            }}
-          >
-            Trusted by Leading Platforms
-          </Typography>
+        {/* Background Image */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: 0,
+          }}
+        >
+          <Image
+            src="/mentors.avif"
+            alt="Great Learning Starts With Great Mentors"
+            fill
+            style={{ objectFit: 'cover' }}
+            unoptimized
+          />
+          {/* Overlay for better text readability */}
           <Box
             sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              background: 'linear-gradient(135deg, rgba(22, 121, 111, 0.7) 0%, rgba(15, 74, 66, 0.7) 100%)',
+              zIndex: 1,
+            }}
+          />
+        </Box>
+
+        {/* Content Overlay */}
+        <Container maxWidth="lg" sx={{ px: { xs: 2, md: 4 }, position: 'relative', zIndex: 2, height: '100%' }}>
+          <Box
+            sx={{
+              height: '100%',
               display: 'flex',
+              flexDirection: 'column',
               justifyContent: 'center',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: 4,
+              alignItems: { xs: 'center', md: 'flex-start' },
+              textAlign: { xs: 'center', md: 'left' },
+              color: '#fff',
+              py: { xs: 4, md: 6 },
+              maxWidth: { xs: '100%', md: '800px' },
             }}
           >
-            {['Platform 1', 'Platform 2', 'Platform 3', 'Platform 4', 'Platform 5'].map((name, index) => (
-              <Box
-                key={index}
-                sx={{
-                  px: 3,
-                  py: 2,
-                  borderRadius: 2,
-                  bgcolor: '#fff',
-                  border: '1px solid #e4e7ec',
-                  minWidth: 120,
-                  textAlign: 'center',
-                }}
-              >
-                <Typography variant="body2" sx={{ color: '#667085', fontWeight: 500 }}>
-                  {name}
-                </Typography>
-              </Box>
-            ))}
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: { xs: '2.5rem', md: '3.5rem' },
+                fontWeight: 700,
+                mb: 3,
+                lineHeight: 1.2,
+                color: '#fff',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+              }}
+            >
+              Great Learning Starts With Great Mentors
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                fontSize: { xs: '1rem', md: '1.25rem' },
+                mb: 4,
+                color: 'rgba(255,255,255,0.95)',
+                lineHeight: 1.6,
+                maxWidth: { xs: '100%', md: '600px' },
+                textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+              }}
+            >
+              Join a growing learning community where students learn from skilled peers, book personalized sessions, and grow academically and creatively through real, experience-based teaching.
+            </Typography>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => router.push('/instructors')}
+              sx={{
+                backgroundColor: '#fff',
+                color: '#16796f',
+                px: 5,
+                py: 1.75,
+                fontSize: '1rem',
+                fontWeight: 600,
+                textTransform: 'none',
+                borderRadius: 2,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                '&:hover': {
+                  backgroundColor: 'rgba(255,255,255,0.9)',
+                },
+              }}
+            >
+              Find Instructors
+            </Button>
           </Box>
         </Container>
       </Box>
 
       {/* Features Section */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Grid container spacing={4} alignItems="center">
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Box
+      <Container maxWidth="lg" sx={{ py: { xs: 8, md: 12 }, px: { xs: 2, md: 4 } }}>
+        <Box sx={{ textAlign: 'center', mb: 8 }}>
+          <Typography
+            variant="h2"
+            sx={{
+              fontSize: { xs: '2rem', md: '2.75rem' },
+              fontWeight: 700,
+              mb: 2,
+              color: '#16796f',
+            }}
+          >
+            Our Amazing Features
+          </Typography>
+          <Typography 
+            variant="body1" 
+            color="text.secondary"
+            sx={{
+              fontSize: { xs: '1rem', md: '1.125rem' },
+              maxWidth: 600,
+              mx: 'auto',
+            }}
+          >
+            Everything you need to learn, teach, and grow in one platform
+          </Typography>
+        </Box>
+
+        <Grid container spacing={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Card
               sx={{
-                position: 'relative',
-                height: { xs: 300, md: 400 },
-                borderRadius: 4,
-                overflow: 'hidden',
+                height: '100%',
+                p: 3,
+                borderRadius: 3,
+                border: '1px solid #e4e7ec',
+                bgcolor: '#fff',
+                transition: 'transform 0.3s, box-shadow 0.3s',
+                '&:hover': {
+                  transform: 'translateY(-8px)',
+                  boxShadow: '0 12px 32px rgba(22, 121, 111, 0.15)',
+                  borderColor: '#16796f',
+                },
               }}
             >
-              <Image
-                src="https://plus.unsplash.com/premium_vector-1682303058649-52fb42b3c7cf?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDR8fHxlbnwwfHx8fHw%3D"
-                alt="Features - Person with tablet"
-                fill
-                style={{ objectFit: 'contain' }}
-                unoptimized
-              />
-            </Box>
+              <Box
+                sx={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 3,
+                  bgcolor: '#e8f5e9',
+                  color: '#16796f',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mb: 3,
+                }}
+              >
+                <RateReviewIcon sx={{ fontSize: 32 }} />
+              </Box>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, color: '#101828' }}>
+                Collect Reviews
+              </Typography>
+              <Typography 
+                variant="body2" 
+                color="text.secondary"
+                sx={{ lineHeight: 1.7 }}
+              >
+                Get authentic feedback from learners and build a strong, trustworthy reputation on the platform.
+              </Typography>
+            </Card>
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography
-              variant="h2"
+
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Card
               sx={{
-                fontSize: { xs: '2rem', md: '2.5rem' },
-                fontWeight: 700,
-                mb: 3,
-                color: '#16796f',
+                height: '100%',
+                p: 3,
+                borderRadius: 3,
+                border: '1px solid #e4e7ec',
+                bgcolor: '#fff',
+                transition: 'transform 0.3s, box-shadow 0.3s',
+                '&:hover': {
+                  transform: 'translateY(-8px)',
+                  boxShadow: '0 12px 32px rgba(22, 121, 111, 0.15)',
+                  borderColor: '#16796f',
+                },
               }}
             >
-              Our Amazing Features Helpful for Your Learning
-            </Typography>
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box sx={{ mb: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-                    <Box
-                      sx={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 2,
-                        bgcolor: '#e8f5e9',
-                        color: '#16796f',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <StarIcon />
-                    </Box>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      Collect Reviews
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ pl: 7 }}>
-                    Get authentic feedback from students to build your reputation
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box sx={{ mb: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-                    <Box
-                      sx={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 2,
-                        bgcolor: '#e8f5e9',
-                        color: '#16796f',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <MenuBookIcon />
-                    </Box>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      Start Your Offering
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ pl: 7 }}>
-                    Create and share your expertise through personalized sessions
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box sx={{ mb: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-                    <Box
-                      sx={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 2,
-                        bgcolor: '#e8f5e9',
-                        color: '#16796f',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <TrendingUpIcon />
-                    </Box>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      Top Rated Instructors
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ pl: 7 }}>
-                    Learn from the best instructors with proven track records
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box sx={{ mb: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-                    <Box
-                      sx={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 2,
-                        bgcolor: '#e8f5e9',
-                        color: '#16796f',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <PersonIcon />
-                    </Box>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      Create Your Profile
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ pl: 7 }}>
-                    Build a comprehensive profile showcasing your skills and expertise
-                  </Typography>
-                </Box>
-              </Grid>
-            </Grid>
+              <Box
+                sx={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 3,
+                  bgcolor: '#e8f5e9',
+                  color: '#16796f',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mb: 3,
+                }}
+              >
+                <MenuBookIcon sx={{ fontSize: 32 }} />
+              </Box>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, color: '#101828' }}>
+                Start Your Offering
+              </Typography>
+              <Typography 
+                variant="body2" 
+                color="text.secondary"
+                sx={{ lineHeight: 1.7 }}
+              >
+                Share your expertise through personalized sessions and help others learn the skills you've mastered.
+              </Typography>
+            </Card>
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Card
+              sx={{
+                height: '100%',
+                p: 3,
+                borderRadius: 3,
+                border: '1px solid #e4e7ec',
+                bgcolor: '#fff',
+                transition: 'transform 0.3s, box-shadow 0.3s',
+                '&:hover': {
+                  transform: 'translateY(-8px)',
+                  boxShadow: '0 12px 32px rgba(22, 121, 111, 0.15)',
+                  borderColor: '#16796f',
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 3,
+                  bgcolor: '#e8f5e9',
+                  color: '#16796f',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mb: 3,
+                }}
+              >
+                <WorkspacePremiumIcon sx={{ fontSize: 32 }} />
+              </Box>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, color: '#101828' }}>
+                Top Rated Instructors
+              </Typography>
+              <Typography 
+                variant="body2" 
+                color="text.secondary"
+                sx={{ lineHeight: 1.7 }}
+              >
+                Learn from the best — instructors with proven track records, great reviews, and real teaching experience.
+              </Typography>
+            </Card>
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Card
+              sx={{
+                height: '100%',
+                p: 3,
+                borderRadius: 3,
+                border: '1px solid #e4e7ec',
+                bgcolor: '#fff',
+                transition: 'transform 0.3s, box-shadow 0.3s',
+                '&:hover': {
+                  transform: 'translateY(-8px)',
+                  boxShadow: '0 12px 32px rgba(22, 121, 111, 0.15)',
+                  borderColor: '#16796f',
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 3,
+                  bgcolor: '#e8f5e9',
+                  color: '#16796f',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mb: 3,
+                }}
+              >
+                <PersonIcon sx={{ fontSize: 32 }} />
+              </Box>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, color: '#101828' }}>
+                Create Your Profile
+              </Typography>
+              <Typography 
+                variant="body2" 
+                color="text.secondary"
+                sx={{ lineHeight: 1.7 }}
+              >
+                Build a comprehensive profile showcasing your skills, achievements, certifications, and offerings.
+              </Typography>
+            </Card>
           </Grid>
         </Grid>
       </Container>
 
       {/* Marketplace Exploration Section */}
-      <Box sx={{ bgcolor: '#f8fafc', py: 8 }}>
-        <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: 6 }}>
+      <Box sx={{ bgcolor: '#f8fafc', py: { xs: 8, md: 12 }, px: { xs: 2, md: 4 } }}>
+        <Container maxWidth="lg" sx={{ px: { xs: 2, md: 4 } }}>
+          <Box sx={{ textAlign: 'center', mb: 8 }}>
             <Typography
               variant="h2"
               sx={{
-                fontSize: { xs: '2rem', md: '3rem' },
+                fontSize: { xs: '2rem', md: '2.75rem' },
                 fontWeight: 700,
                 mb: 2,
                 color: '#16796f',
@@ -351,211 +399,118 @@ export default function About() {
             >
               Explore the Marketplace
             </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Discover offerings across various categories
+            <Typography 
+              variant="body1" 
+              color="text.secondary"
+              sx={{
+                fontSize: { xs: '1rem', md: '1.125rem' },
+                maxWidth: 600,
+                mx: 'auto',
+              }}
+            >
+              Discover offerings across various categories and find the perfect learning opportunity
             </Typography>
           </Box>
 
           <Grid container spacing={3}>
             {[
-              'Graphic Design',
-              'Digital Marketing',
-              'Content Writing',
-              'Development',
-              'Data Entry',
-              'Business',
-              'Web Design',
+              { name: 'Web Development', icon: <SchoolIcon /> },
+              { name: 'Graphic Design', icon: <MenuBookIcon /> },
+              { name: 'Music & Instruments', icon: <StarIcon /> },
+              { name: 'Digital Marketing', icon: <TrendingUpIcon /> },
+              { name: 'Fitness & Yoga', icon: <PersonIcon /> },
+              { name: 'Photography & Video', icon: <RateReviewIcon /> },
+              { name: 'Art & Craft', icon: <WorkspacePremiumIcon /> },
+              { name: 'Finance & Investing', icon: <EventAvailableIcon /> },
             ].map((category, index) => (
               <Grid size={{ xs: 6, sm: 4, md: 3 }} key={index}>
                 <Card
                   sx={{
                     textAlign: 'center',
-                    p: 3,
+                    p: 3.5,
                     borderRadius: 3,
                     border: '1px solid #e4e7ec',
                     bgcolor: '#fff',
                     cursor: 'pointer',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    transition: 'transform 0.3s, box-shadow 0.3s, border-color 0.3s',
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
                     '&:hover': {
-                      transform: 'translateY(-4px)',
-                      boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0 12px 32px rgba(22, 121, 111, 0.15)',
+                      borderColor: '#16796f',
                     },
                   }}
                 >
                   <Box
                     sx={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: 2,
+                      width: 72,
+                      height: 72,
+                      borderRadius: 3,
                       bgcolor: '#e8f5e9',
                       color: '#16796f',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      mx: 'auto',
-                      mb: 2,
+                      mb: 2.5,
                     }}
                   >
-                    <SchoolIcon sx={{ fontSize: 32 }} />
+                    {category.icon}
                   </Box>
-                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#16796f' }}>
-                    {category}
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      fontWeight: 600, 
+                      color: '#101828',
+                      fontSize: { xs: '0.95rem', md: '1rem' },
+                    }}
+                  >
+                    {category.name}
                   </Typography>
                 </Card>
               </Grid>
             ))}
-            <Grid size={{ xs: 6, sm: 4, md: 3 }}>
-              <Card
-                sx={{
-                  textAlign: 'center',
-                  p: 3,
-                  borderRadius: 3,
-                  border: '1px solid #e4e7ec',
-                  bgcolor: '#fff',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: 2,
-                    bgcolor: '#e8f5e9',
-                    color: '#16796f',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    mx: 'auto',
-                    mb: 2,
-                  }}
-                >
-                  <SchoolIcon sx={{ fontSize: 32 }} />
-                </Box>
-                <Typography variant="h6" sx={{ fontWeight: 600, color: '#16796f', mb: 0.5 }}>
-                  30+ Categories
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#667085' }}>
-                  for Your Learning
-                </Typography>
-              </Card>
-            </Grid>
           </Grid>
         </Container>
       </Box>
-
-      {/* Collect Reviews Section */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Grid container spacing={4} alignItems="center">
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography
-              variant="h2"
-              sx={{
-                fontSize: { xs: '2rem', md: '2.5rem' },
-                fontWeight: 700,
-                mb: 3,
-                color: '#16796f',
-              }}
-            >
-              Collect Reviews from Your Existing Students
-            </Typography>
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              sx={{ mb: 4, lineHeight: 1.8 }}
-            >
-              Build trust and credibility by showcasing authentic reviews from students 
-              who have completed sessions with you. Reviews help new students make informed 
-              decisions and help you grow your teaching practice.
-            </Typography>
-            <Button
-              variant="contained"
-              size="large"
-              onClick={() => router.push('/auth/signup')}
-              sx={{
-                backgroundColor: '#1a8a7a',
-                color: '#fff',
-                px: 4,
-                py: 1.5,
-                fontSize: '1rem',
-                fontWeight: 600,
-                textTransform: 'none',
-                borderRadius: 2,
-                '&:hover': {
-                  backgroundColor: '#5a9aa2',
-                },
-              }}
-            >
-              Get Started
-            </Button>
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Box
-              sx={{
-                position: 'relative',
-                height: { xs: 300, md: 400 },
-                borderRadius: 4,
-                overflow: 'hidden',
-              }}
-            >
-              <Image
-                src="https://plus.unsplash.com/premium_vector-1726290624743-2cb16b1f38b2?q=80&w=996&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="Collect Reviews - Person with laptop showing reviews"
-                fill
-                style={{ objectFit: 'contain' }}
-                unoptimized
-              />
-            </Box>
-          </Grid>
-        </Grid>
-      </Container>
 
       {/* Top Rated Instructors Section */}
       <Box
         sx={{
           backgroundColor: '#fff',
           py: { xs: 8, md: 12 },
+          px: { xs: 2, md: 4 },
           position: 'relative',
         }}
       >
-        <Container maxWidth="xl">
-          <Grid container spacing={4} alignItems="center">
+        <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
+          <Grid container spacing={6} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  height: { xs: 300, md: 400 },
+                  height: { xs: 300, md: 450 },
                 }}
               >
                 {/* Circle with image background and teal overlay */}
                 <Box
                   sx={{
                     position: 'relative',
-                    width: { xs: 250, md: 320 },
-                    height: { xs: 250, md: 320 },
+                    width: { xs: 280, md: 360 },
+                    height: { xs: 280, md: 360 },
                     borderRadius: '50%',
                     overflow: 'hidden',
+                    boxShadow: '0 12px 48px rgba(22, 121, 111, 0.2)',
                   }}
                 >
                   {/* Image background */}
                   <Image
-                    src="https://plus.unsplash.com/premium_vector-1682269869102-5292bc3587a1?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDZ8fHxlbnwwfHx8fHw%3D"
+                    src="/top-mentor.avif"
                     alt="Top Rated Instructors - Network visualization"
                     fill
                     style={{ objectFit: 'cover' }}
@@ -581,7 +536,7 @@ export default function About() {
                     <Typography
                       variant="h2"
                       sx={{
-                        fontSize: { xs: '3rem', md: '4.5rem' },
+                        fontSize: { xs: '3.5rem', md: '5rem' },
                         fontWeight: 700,
                         color: '#fff',
                         lineHeight: 1,
@@ -593,9 +548,9 @@ export default function About() {
                       variant="body1"
                       sx={{
                         color: '#fff',
-                        mt: 1,
+                        mt: 1.5,
                         fontWeight: 600,
-                        fontSize: { xs: '1rem', md: '1.25rem' },
+                        fontSize: { xs: '1.125rem', md: '1.375rem' },
                       }}
                     >
                       Active Instructors
@@ -608,42 +563,42 @@ export default function About() {
               <Typography
                 variant="h2"
                 sx={{
-                  fontSize: { xs: '2rem', md: '3rem' },
+                  fontSize: { xs: '2rem', md: '2.75rem' },
                   fontWeight: 700,
                   mb: 3,
                   color: '#16796f',
                 }}
               >
-                Hire Our Top Rated Instructors
+                Hire Our Top Instructors
               </Typography>
               <Typography
                 variant="body1"
                 sx={{
-                  fontSize: { xs: '1rem', md: '1.25rem' },
+                  fontSize: { xs: '1rem', md: '1.125rem' },
                   mb: 4,
-                  color: '#535862',
-                  lineHeight: 1.6,
+                  color: '#667085',
+                  lineHeight: 1.8,
                 }}
               >
-                Connect with experienced instructors who have proven track records 
-                and excellent student reviews. Our platform makes it easy to find 
-                the perfect instructor for your learning goals.
+                Discover skilled and highly-rated instructors with exceptional student feedback. Whether you're learning a new skill or improving an existing one, our top tutors are ready to guide you with personalized, high-quality sessions. Find the perfect match for your learning goals and start your journey today.
               </Typography>
               <Button
                 variant="contained"
                 size="large"
-                onClick={() => router.push('/offerings')}
+                onClick={() => router.push('/instructors')}
                 sx={{
                   backgroundColor: '#16796f',
                   color: '#fff',
-                  px: 4,
-                  py: 1.5,
+                  px: 5,
+                  py: 1.75,
                   fontSize: '1rem',
                   fontWeight: 600,
                   textTransform: 'none',
                   borderRadius: 2,
+                  boxShadow: '0 4px 12px rgba(22, 121, 111, 0.3)',
                   '&:hover': {
                     backgroundColor: '#125a4f',
+                    boxShadow: '0 6px 16px rgba(22, 121, 111, 0.4)',
                   },
                 }}
               >
@@ -655,36 +610,67 @@ export default function About() {
       </Box>
 
       {/* Stats Section */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 8, md: 12 }, px: { xs: 2, md: 4 } }}>
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
+          <Typography
+            variant="h2"
+            sx={{
+              fontSize: { xs: '2rem', md: '2.75rem' },
+              fontWeight: 700,
+              mb: 2,
+              color: '#16796f',
+            }}
+          >
+            Our Impact
+          </Typography>
+          <Typography 
+            variant="body1" 
+            color="text.secondary"
+            sx={{
+              fontSize: { xs: '1rem', md: '1.125rem' },
+              maxWidth: 600,
+              mx: 'auto',
+            }}
+          >
+            Numbers that reflect our commitment to quality education
+          </Typography>
+        </Box>
+
         <Grid container spacing={4}>
           {[
-            { icon: <PeopleIcon />, value: loading ? '...' : `${stats.totalUsers}+`, label: 'Active Users' },
+            { icon: <GroupsIcon />, value: loading ? '...' : `${stats.totalUsers}+`, label: 'Active Users' },
             { icon: <MenuBookIcon />, value: loading ? '...' : `${stats.totalOfferings}+`, label: 'Total Offerings' },
-            { icon: <SchoolIcon />, value: loading ? '...' : `${stats.totalSessions}+`, label: 'Sessions Completed' },
+            { icon: <EventAvailableIcon />, value: loading ? '...' : `${stats.totalSessions}+`, label: 'Sessions Completed' },
             { icon: <StarIcon />, value: loading ? '...' : `${stats.topContributors}+`, label: 'Top Instructors' },
           ].map((stat, index) => (
             <Grid size={{ xs: 6, md: 3 }} key={index}>
               <Card
                 sx={{
                   textAlign: 'center',
-                  p: 3,
+                  p: 4,
                   borderRadius: 3,
                   bgcolor: '#f8fafc',
                   border: '1px solid #e4e7ec',
+                  transition: 'transform 0.3s, box-shadow 0.3s',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 8px 24px rgba(22, 121, 111, 0.15)',
+                    borderColor: '#16796f',
+                  },
                 }}
               >
                 <Box
                   sx={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: 2,
+                    width: 72,
+                    height: 72,
+                    borderRadius: 3,
                     bgcolor: '#e8f5e9',
                     color: '#16796f',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     mx: 'auto',
-                    mb: 2,
+                    mb: 3,
                   }}
                 >
                   {stat.icon}
@@ -695,11 +681,16 @@ export default function About() {
                     fontWeight: 700,
                     mb: 1,
                     color: '#16796f',
+                    fontSize: { xs: '2rem', md: '2.5rem' },
                   }}
                 >
                   {stat.value}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography 
+                  variant="body1" 
+                  color="text.secondary"
+                  sx={{ fontWeight: 500 }}
+                >
                   {stat.label}
                 </Typography>
               </Card>
@@ -710,4 +701,3 @@ export default function About() {
     </Box>
   );
 }
-

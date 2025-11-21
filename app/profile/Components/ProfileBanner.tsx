@@ -10,6 +10,8 @@ import {
   DialogContent,
   DialogActions,
   CircularProgress,
+  Chip,
+  Box,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import Image from "next/image";
@@ -60,6 +62,8 @@ const ProfileBanner = ({ user, refreshProfile, isEditMode = true }: ProfileBanne
       const data = await profileService.updateProfile({ profilePicture: imageValue });
       if (data.success && data.data) {
         localStorage.setItem("user", JSON.stringify(data.data));
+        // Dispatch custom event to update navbar
+        window.dispatchEvent(new Event('userUpdated'));
         await refreshProfile();
         successAlert("Profile image updated successfully!", "top-right");
         setIsImageModalOpen(false);
@@ -129,14 +133,55 @@ const ProfileBanner = ({ user, refreshProfile, isEditMode = true }: ProfileBanne
             <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
               {user?.email || ""}
             </Typography>
+            {/* Show role below email on mobile */}
+            {user?.role && (
+              <Box sx={{ display: { xs: 'block', md: 'none' }, mt: 1 }}>
+                <Chip
+                  label={user.role === "teacher" ? "Instructor" : "Student"}
+                  sx={{
+                    backgroundColor: 'rgba(22, 121, 111, 0.15)',
+                    color: '#16796f',
+                    fontWeight: 600,
+                    fontSize: '0.75rem',
+                    textTransform: 'uppercase',
+                    height: 28,
+                  }}
+                />
+              </Box>
+            )}
           </div>
         </div>
-        <Button 
-          sx={{ ...button, width: { xs: "100%", sm: "150px" }, mt: { xs: 2, md: "40px" } }} 
-          onClick={handleLogout}
-        >
-          Log Out
-        </Button>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', md: 'row' }, 
+          alignItems: { xs: 'stretch', md: 'center' },
+          gap: { xs: 1, md: 2 },
+          mt: { xs: 2, md: "40px" },
+          width: { xs: "100%", md: "auto" }
+        }}>
+          {/* Show role beside logout button on desktop */}
+          {user?.role && (
+            <Chip
+              label={user.role === "teacher" ? "Instructor" : "Student"}
+              sx={{
+                display: { xs: 'none', md: 'flex' },
+                backgroundColor: 'rgba(22, 121, 111, 0.15)',
+                color: '#16796f',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                textTransform: 'uppercase',
+                height: 40,
+                px: 2,
+              }}
+            />
+          )}
+          <Button 
+            sx={{ ...button, width: { xs: "100%", sm: "150px" } }} 
+            onClick={handleLogout}
+          >
+            Log Out
+          </Button>
+        </Box>
       </div>
 
       <Dialog

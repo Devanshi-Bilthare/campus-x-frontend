@@ -4,7 +4,7 @@ import "./globals.css";
 import ThemeProvider from "./ThemeProvider";
 import ConditionalNavbar from "./components/ConditionalNavbar";
 import ConditionalFooter from "./components/ConditionalFooter";
-import { Toaster } from "react-hot-toast";
+import ToasterWrapper from "./components/ToasterWrapper";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -34,7 +34,7 @@ export default function RootLayout({
         className={`${inter.variable} ${bricolageGrotesque.variable} antialiased`}
       >
         <ThemeProvider>
-          <Toaster position="top-right" />
+          <ToasterWrapper />
           <div className="w-full flex justify-center">
             <div className="w-full max-w-[1400px] flex flex-col min-h-screen">
               <ConditionalNavbar />

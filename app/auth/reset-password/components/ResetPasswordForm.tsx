@@ -11,7 +11,7 @@ import { successAlert, errorAlert } from "@/components/ToastGroup";
 const ResetPasswordForm = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const token = searchParams.get('token');
+  const token = searchParams?.get('token') || null;
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);

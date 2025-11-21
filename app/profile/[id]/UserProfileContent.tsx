@@ -2,18 +2,21 @@
 
 import { useState, SyntheticEvent, useEffect } from "react";
 import { Box, Tabs, Tab, useMediaQuery, useTheme, Grid, Stack, CircularProgress, Typography } from "@mui/material";
+import { useSearchParams } from 'next/navigation';
 import ProfileBanner from "../Components/ProfileBanner";
 import PersonalInfo from "../Components/PersonalInfo";
 import AcadimicDetails from "../Components/AcadimicDetails";
 import Skills from "../Components/Skills";
 import Certificates from "../Components/Certificates";
 import OverviewSection from "../Components/OverviewSection";
+import Reviews from "../Components/Reviews";
 import OfferingsList from "@/app/offerings/components/OfferingsList";
 import { profileService } from "@/app/services/profileService";
 
 const USER_TABS = [
   { label: "Overview", value: "overview" },
   { label: "Offerings", value: "offerings" },
+  { label: "Reviews", value: "reviews" },
   { label: "Personal Info", value: "personal" },
 ];
 
@@ -67,9 +70,23 @@ const UserOfferings = ({ userId }: { userId: string }) => {
 };
 
 const UserProfileContent = ({ user }: UserProfileContentProps) => {
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState("overview");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  // Check for tab query parameter
+  useEffect(() => {
+    try {
+      const tabParam = searchParams?.get('tab');
+      if (tabParam && USER_TABS.some(tab => tab.value === tabParam)) {
+        setActiveTab(tabParam);
+      }
+    } catch (error) {
+      // Handle error silently - use default tab
+      console.error('Error reading search params:', error);
+    }
+  }, [searchParams]);
 
   const handleTabChange = (_: SyntheticEvent, newValue: string) => {
     setActiveTab(newValue);
@@ -123,14 +140,20 @@ const UserProfileContent = ({ user }: UserProfileContentProps) => {
         </Tabs>
       </Box>
 
-      <Box sx={{ mt: 4, px: { xs: 2, md: 4 } }}>
+      <Box sx={{ mt: { xs: 3, md: 4 }, px: { xs: 2, md: 4 }, pb: { xs: 4, md: 6 } }}>
         {activeTab === "overview" && (
-          <OverviewSection user={user} showDashboard={false} />
+          <OverviewSection user={user} showDashboard={false} profileId={user._id || user.id} />
         )}
 
         {activeTab === "offerings" && (
           <Box sx={{ minHeight: 200 }}>
             <UserOfferings userId={user._id || user.id} />
+          </Box>
+        )}
+
+        {activeTab === "reviews" && (
+          <Box sx={{ minHeight: 200 }}>
+            <Reviews profileId={user._id || user.id} profileUserId={user._id || user.id} />
           </Box>
         )}
 

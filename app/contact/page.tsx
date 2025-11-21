@@ -57,8 +57,8 @@ const ContactPage = () => {
   });
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#fff', py: { xs: 4, md: 8 } }}>
-      <Container maxWidth="lg">
+    <Box sx={{ minHeight: '100vh', bgcolor: '#fff', py: { xs: 4, md: 6 } }}>
+      <Container maxWidth="lg" sx={{ px: { xs: 2, md: 4 } }}>
         {/* Header Section */}
         <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
           <Typography

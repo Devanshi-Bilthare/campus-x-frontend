@@ -7,9 +7,12 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { profileService } from '@/app/services/profileService';
 import { successAlert, errorAlert } from '@/components/ToastGroup';
+import { getUser } from '@/app/utils/auth';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import DateCalendarField from '@/components/DateCalendarField';
 
 interface OfferingsListProps {
   fetchOfferings?: () => Promise<any[]>;
@@ -25,19 +28,45 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
   const [loading, setLoading] = useState(!propOfferings && !!fetchOfferings);
   const [error, setError] = useState<string | null>(null);
   const [selectedSlots, setSelectedSlots] = useState<Record<string, string>>({});
+  const [selectedDates, setSelectedDates] = useState<Record<string, string>>({});
   const [bookingLoading, setBookingLoading] = useState<Record<string, boolean>>({});
+  
+  // Check if user is a student (only students can book)
+  const user = getUser();
+  const isStudent = user?.role === 'student';
 
-  // Initialize first slot as selected for each offering
+  // Get minimum date (today)
+  const getMinDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
+  // Initialize first slot and today's date as selected for each offering
   useEffect(() => {
     if (offerings.length > 0) {
       const initialSelections: Record<string, string> = {};
+      const initialDates: Record<string, string> = {};
+      const today = getMinDate();
+      
       offerings.forEach(off => {
         if (off.slots && off.slots.length > 0 && !selectedSlots[off._id]) {
-          initialSelections[off._id] = off.slots[0];
+          // Find first available slot for today
+          const availableSlots = getAvailableSlots(off, today);
+          if (availableSlots.length > 0) {
+            initialSelections[off._id] = availableSlots[0];
+          } else if (off.slots.length > 0) {
+            initialSelections[off._id] = off.slots[0];
+          }
+        }
+        if (!selectedDates[off._id]) {
+          initialDates[off._id] = today;
         }
       });
       if (Object.keys(initialSelections).length > 0) {
         setSelectedSlots(prev => ({ ...prev, ...initialSelections }));
+      }
+      if (Object.keys(initialDates).length > 0) {
+        setSelectedDates(prev => ({ ...prev, ...initialDates }));
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -108,6 +137,57 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
     }));
   };
 
+  const handleDateSelect = (offeringId: string, date: string) => {
+    setSelectedDates(prev => ({
+      ...prev,
+      [offeringId]: date
+    }));
+    // Reset slot selection when date changes to ensure we select an available slot
+    const offering = offerings.find(off => off._id === offeringId);
+    if (offering) {
+      const availableSlots = getAvailableSlots(offering, date);
+      if (availableSlots.length > 0) {
+        setSelectedSlots(prev => ({
+          ...prev,
+          [offeringId]: availableSlots[0]
+        }));
+      } else {
+        // If no slots available, clear selection
+        setSelectedSlots(prev => {
+          const newState = { ...prev };
+          delete newState[offeringId];
+          return newState;
+        });
+      }
+    }
+  };
+
+  // Get available slots for a specific date
+  const getAvailableSlots = (offering: any, date: string): string[] => {
+    if (!offering.slots || offering.slots.length === 0) return [];
+    
+    const bookedSlots = offering.bookedSlots || [];
+    const selectedDate = new Date(date);
+    selectedDate.setHours(0, 0, 0, 0);
+    
+    // Filter out slots that are already booked for this date
+    const bookedSlotsForDate = bookedSlots
+      .filter((booked: any) => {
+        const bookedDate = new Date(booked.date);
+        bookedDate.setHours(0, 0, 0, 0);
+        return bookedDate.getTime() === selectedDate.getTime();
+      })
+      .map((booked: any) => booked.slot);
+    
+    return offering.slots.filter((slot: string) => !bookedSlotsForDate.includes(slot));
+  };
+
+  // Check if a slot is available for a specific date
+  const isSlotAvailable = (offering: any, slot: string, date: string): boolean => {
+    const availableSlots = getAvailableSlots(offering, date);
+    return availableSlots.includes(slot);
+  };
+
   const formatSlotTime = (slot: string) => {
     if (!slot) return slot;
     
@@ -134,18 +214,35 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
   };
 
   const handleBooking = async (offeringId: string) => {
+    // Only students can book sessions
+    if (!isStudent) {
+      errorAlert('Only students can book sessions', 'top-right');
+      return;
+    }
+    
     const selectedSlot = selectedSlots[offeringId];
+    const selectedDate = selectedDates[offeringId];
     
     if (!selectedSlot) {
       errorAlert('Please select a slot before booking', 'top-right');
       return;
     }
 
+    if (!selectedDate) {
+      errorAlert('Please select a date before booking', 'top-right');
+      return;
+    }
+
+    const offering = offerings.find(off => off._id === offeringId);
+    if (offering && !isSlotAvailable(offering, selectedSlot, selectedDate)) {
+      errorAlert('This slot is not available for the selected date', 'top-right');
+      return;
+    }
+
     setBookingLoading(prev => ({ ...prev, [offeringId]: true }));
     
     try {
-      // Send single slot instead of array
-      const result = await profileService.createBooking(offeringId, selectedSlot);
+      const result = await profileService.createBooking(offeringId, selectedSlot, selectedDate);
       successAlert(result.message || 'Booking request sent successfully!', 'top-right');
       
       // Redirect to profile page to see booking in pending section
@@ -153,7 +250,7 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
         router.push('/profile?tab=pending');
       }, 1000);
       
-      // Refresh offerings to update completedCount
+      // Refresh offerings to update bookedSlots
       if (fetchOfferings && !propOfferings) {
         const updatedOfferings = await fetchOfferings();
         setOfferings(updatedOfferings);
@@ -172,11 +269,13 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
     <Grid container spacing={2}>
       {offerings.map(off => {
         const selectedSlot = selectedSlots[off._id];
+        const selectedDate = selectedDates[off._id] || getMinDate();
         const instructor = off.userId || off.user || {};
         const instructorName = instructor.fullName || instructor.username || 'Instructor';
         const instructorImage = instructor.profilePicture || instructor.profileImage || '/auth/profile.png';
         const firstTag = off.tags && off.tags.length > 0 ? off.tags[0] : null;
         const slotCount = off.slots ? off.slots.length : 0;
+        const availableSlots = getAvailableSlots(off, selectedDate);
         
         return (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={off._id}>
@@ -309,6 +408,22 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
                   </Box>
                 </Box>
                 
+                {/* Date Selection */}
+                {showBookingButton && (
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, fontSize: '0.875rem', color: '#667085', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <CalendarTodayIcon sx={{ fontSize: 16 }} />
+                      Select Date:
+                    </Typography>
+                    <DateCalendarField
+                      value={selectedDate}
+                      onChange={(date) => handleDateSelect(off._id, date)}
+                      minDate={getMinDate()}
+                      placeholder="Select booking date"
+                    />
+                  </Box>
+                )}
+
                 {/* Slots Selection */}
                 {off.slots && off.slots.length > 0 && (
                   <Box sx={{ mb: 2 }}>
@@ -318,12 +433,14 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                       {off.slots.map((slot: string, index: number) => {
                         const isSelected = selectedSlot === slot;
+                        const isAvailable = isSlotAvailable(off, slot, selectedDate);
                         return (
                           <Button
                             key={index}
                             variant="outlined"
                             size="small"
-                            onClick={() => handleSlotSelect(off._id, slot)}
+                            onClick={() => isAvailable && handleSlotSelect(off._id, slot)}
+                            disabled={!isAvailable}
                             sx={{
                               minWidth: 'auto',
                               px: 2,
@@ -331,18 +448,26 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
                               fontSize: '0.8rem',
                               textTransform: 'none',
                               backgroundColor: isSelected ? '#16796f' : 'transparent',
-                              color: isSelected ? '#fff' : '#16796f',
-                              borderColor: isSelected ? '#16796f' : '#e4e7ec',
+                              color: isSelected ? '#fff' : isAvailable ? '#16796f' : '#98a2b3',
+                              borderColor: isSelected ? '#16796f' : isAvailable ? '#e4e7ec' : '#e4e7ec',
                               borderWidth: isSelected ? 2 : 1,
                               fontWeight: isSelected ? 600 : 500,
+                              opacity: isAvailable ? 1 : 0.5,
+                              cursor: isAvailable ? 'pointer' : 'not-allowed',
+                              textDecoration: !isAvailable ? 'line-through' : 'none',
                               '&:hover': {
-                                backgroundColor: isSelected ? '#125a4f' : 'rgba(22, 121, 111, 0.08)',
-                                borderColor: '#16796f',
-                                borderWidth: 2,
+                                backgroundColor: isAvailable ? (isSelected ? '#125a4f' : 'rgba(22, 121, 111, 0.08)') : 'transparent',
+                                borderColor: isAvailable ? '#16796f' : '#e4e7ec',
+                                borderWidth: isAvailable ? 2 : 1,
+                              },
+                              '&:disabled': {
+                                borderColor: '#e4e7ec',
+                                color: '#98a2b3',
                               },
                             }}
                           >
                             {formatSlotTime(slot)}
+                            {!isAvailable && ' (Booked)'}
                           </Button>
                         );
                       })}
@@ -359,14 +484,14 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
                   </Box>
                 )}
                 
-                {/* Booking Button - Only show if showBookingButton is true */}
-                {showBookingButton && (
+                {/* Booking Button - Only show if showBookingButton is true and user is a student */}
+                {showBookingButton && isStudent && (
                   <Button
                     variant="contained"
                     fullWidth
                     startIcon={<EventAvailableIcon />}
                     onClick={() => handleBooking(off._id)}
-                    disabled={bookingLoading[off._id] || !selectedSlot}
+                    disabled={bookingLoading[off._id] || !selectedSlot || !selectedDate || availableSlots.length === 0}
                     sx={{
                       mt: 'auto',
                       backgroundColor: '#16796f',

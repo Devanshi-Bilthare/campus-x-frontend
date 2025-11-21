@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { profileService } from '@/app/services/profileService';
 import { successAlert, errorAlert } from '@/components/ToastGroup';
-import { getUser } from '@/app/utils/auth';
+import { getUser, isLoggedIn } from '@/app/utils/auth';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
@@ -214,9 +214,18 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
   };
 
   const handleBooking = async (offeringId: string) => {
+    // Check if user is logged in
+    if (!isLoggedIn()) {
+      errorAlert('Please login to book a session', 'top-center');
+      setTimeout(() => {
+        router.push('/auth/login');
+      }, 1500);
+      return;
+    }
+
     // Only students can book sessions
     if (!isStudent) {
-      errorAlert('Only students can book sessions', 'top-right');
+      errorAlert('Only students can book sessions', 'top-center');
       return;
     }
     
@@ -224,18 +233,18 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
     const selectedDate = selectedDates[offeringId];
     
     if (!selectedSlot) {
-      errorAlert('Please select a slot before booking', 'top-right');
+      errorAlert('Please select a slot before booking', 'top-center');
       return;
     }
 
     if (!selectedDate) {
-      errorAlert('Please select a date before booking', 'top-right');
+      errorAlert('Please select a date before booking', 'top-center');
       return;
     }
 
     const offering = offerings.find(off => off._id === offeringId);
     if (offering && !isSlotAvailable(offering, selectedSlot, selectedDate)) {
-      errorAlert('This slot is not available for the selected date', 'top-right');
+      errorAlert('This slot is not available for the selected date', 'top-center');
       return;
     }
 
@@ -243,7 +252,7 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
     
     try {
       const result = await profileService.createBooking(offeringId, selectedSlot, selectedDate);
-      successAlert(result.message || 'Booking request sent successfully!', 'top-right');
+      successAlert(result.message || 'Booking request sent successfully!', 'top-center');
       
       // Redirect to profile page to see booking in pending section
       setTimeout(() => {
@@ -259,7 +268,7 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
         onBookingSuccess();
       }
     } catch (error: any) {
-      errorAlert(error.message || 'Failed to create booking', 'top-right');
+      errorAlert(error.message || 'Failed to create booking', 'top-center');
     } finally {
       setBookingLoading(prev => ({ ...prev, [offeringId]: false }));
     }
@@ -484,8 +493,8 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
                   </Box>
                 )}
                 
-                {/* Booking Button - Only show if showBookingButton is true and user is a student */}
-                {showBookingButton && isStudent && (
+                {/* Booking Button - Show for everyone, but only students can actually book */}
+                {showBookingButton && (
                   <Button
                     variant="contained"
                     fullWidth

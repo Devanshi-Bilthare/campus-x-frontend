@@ -231,12 +231,11 @@ export const profileService = {
   },
 
   getAllOfferings: async (): Promise<any[]> => {
-    // Try with auth first, fallback to public if needed
+    // Try with optional auth first, fallback to public if needed
     try {
-      const headers = getAuthHeaders();
       const response = await fetch(`${NEXT_PUBLIC_API_URL}/offerings`, {
         method: 'GET',
-        headers,
+        headers: getOptionalAuthHeaders(),
       });
 
       const result = await parseResponse<any>(response, 'Failed to fetch offerings.');
@@ -254,30 +253,32 @@ export const profileService = {
       
       return [];
     } catch (error: any) {
-      // If auth fails, try public endpoint
-      if (error.message?.includes('Not authenticated')) {
-        const response = await fetch(`${NEXT_PUBLIC_API_URL}/offerings`, {
+      // If request fails, try public endpoint
+      try {
+        const publicResponse = await fetch(`${NEXT_PUBLIC_API_URL}/offerings`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
         });
 
-        const result = await parseResponse<any>(response, 'Failed to fetch offerings.');
+        const publicResult = await parseResponse<any>(publicResponse, 'Failed to fetch offerings.');
         
-        if (Array.isArray(result)) {
-          return result;
+        if (Array.isArray(publicResult)) {
+          return publicResult;
         }
-        if (result?.data && Array.isArray(result.data)) {
-          return result.data;
+        if (publicResult?.data && Array.isArray(publicResult.data)) {
+          return publicResult.data;
         }
-        if (result?.success && result?.data) {
-          return Array.isArray(result.data) ? result.data : [result.data];
+        if (publicResult?.success && publicResult?.data) {
+          return Array.isArray(publicResult.data) ? publicResult.data : [publicResult.data];
         }
         
         return [];
+      } catch (publicError) {
+        console.error('Failed to fetch offerings:', publicError);
+        return [];
       }
-      throw error;
     }
   },
 
@@ -571,11 +572,11 @@ export const profileService = {
     return [];
   },
 
-  // Get user by ID
+  // Get user by ID (public endpoint - works without authentication)
   getUserById: async (userId: string): Promise<any> => {
     const response = await fetch(`${NEXT_PUBLIC_API_URL}/users/${userId}`, {
       method: 'GET',
-      headers: getAuthHeaders(),
+      headers: getOptionalAuthHeaders(),
     });
 
     return parseResponse<any>(response, 'Failed to fetch user.');
@@ -663,14 +664,28 @@ export const profileService = {
     }
   },
 
-  // Get top contributors (users with most offerings)
+  // Get top contributors (users with most offerings) - public endpoint
   getTopContributors: async (limit: number = 6): Promise<any[]> => {
     try {
       const response = await fetch(`${NEXT_PUBLIC_API_URL}/users`, {
         method: 'GET',
-        headers: getAuthHeaders(),
+        headers: getOptionalAuthHeaders(),
       });
-      const result = await parseResponse<any>(response, 'Failed to fetch users.');
+      
+      let result;
+      try {
+        result = await parseResponse<any>(response, 'Failed to fetch users.');
+      } catch (error) {
+        // If authenticated request fails, try without auth
+        const publicResponse = await fetch(`${NEXT_PUBLIC_API_URL}/users`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        result = await parseResponse<any>(publicResponse, 'Failed to fetch users.');
+      }
+      
       const users = Array.isArray(result) ? result : (result?.data && Array.isArray(result.data) ? result.data : []);
       
       // For now, return first N users. In a real app, you'd want to sort by offerings count

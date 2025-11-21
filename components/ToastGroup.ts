@@ -1,13 +1,13 @@
 import { toast, ToastPosition } from "react-hot-toast";
 
-export const errorAlert = (text: string, position: ToastPosition) => {
+export const errorAlert = (text: string, position: ToastPosition = 'top-center') => {
     toast.error(text, {
         duration: 4000,
         position,
     });
 };
 
-export const successAlert = (text: string, position: ToastPosition) => {
+export const successAlert = (text: string, position: ToastPosition = 'top-center') => {
     toast.success(text, {
         duration: 4000,
         position,

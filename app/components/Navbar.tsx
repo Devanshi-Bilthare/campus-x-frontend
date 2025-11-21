@@ -48,12 +48,16 @@ const Navbar = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const user = getUser();
+  const isAdmin = user?.role === 'admin';
+  
   const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Offerings', href: '/offerings' },
     { label: 'Instructors', href: '/instructors' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
+    ...(isAdmin ? [{ label: 'Admin', href: '/admin' }] : []),
   ];
 
   const drawer = (

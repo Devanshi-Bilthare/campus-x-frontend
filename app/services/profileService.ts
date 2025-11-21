@@ -925,5 +925,66 @@ export const profileService = {
 
     return parseResponse<any>(response, 'Failed to delete review.');
   },
+
+  // Admin methods
+  getAllUsers: async (): Promise<any[]> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/users`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    const result = await parseResponse<any>(response, 'Failed to fetch users.');
+    return Array.isArray(result) ? result : (result?.data && Array.isArray(result.data) ? result.data : []);
+  },
+
+  deleteUser: async (userId: string): Promise<any> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/users/${userId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    return parseResponse<any>(response, 'Failed to delete user.');
+  },
+
+  updateUserRole: async (userId: string, role: string): Promise<any> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/users/${userId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ role }),
+    });
+    return parseResponse<any>(response, 'Failed to update user role.');
+  },
+
+  getAllBookings: async (): Promise<any[]> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    const result = await parseResponse<any>(response, 'Failed to fetch bookings.');
+    return Array.isArray(result) ? result : (result?.data && Array.isArray(result.data) ? result.data : []);
+  },
+
+  deleteBooking: async (bookingId: string): Promise<any> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings/${bookingId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    return parseResponse<any>(response, 'Failed to delete booking.');
+  },
+
+  deleteOffering: async (offeringId: string): Promise<any> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/offerings/${offeringId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    return parseResponse<any>(response, 'Failed to delete offering.');
+  },
+
+  getAllReviews: async (): Promise<any[]> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/reviews`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    const result = await parseResponse<any>(response, 'Failed to fetch reviews.');
+    return Array.isArray(result) ? result : (result?.data && Array.isArray(result.data) ? result.data : []);
+  },
 };
 

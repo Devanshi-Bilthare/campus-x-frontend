@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, Stack, Chip, Typography } from "@mui/material";
 import { successAlert, errorAlert } from '@/components/ToastGroup';
 import ImageUpload from '@/components/ImageUpload';
@@ -9,9 +9,11 @@ import { profileService } from '@/app/services/profileService';
 interface Props {
   closeModal: () => void;
   onAdded?: () => void; // optional callback to refresh list
+  onUpdated?: () => void;
+  initialData?: any;
 }
 
-const AddOfferings: React.FC<Props> = ({ closeModal, onAdded }) => {
+const AddOfferings: React.FC<Props> = ({ closeModal, onAdded, onUpdated, initialData }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
@@ -22,6 +24,22 @@ const AddOfferings: React.FC<Props> = ({ closeModal, onAdded }) => {
   const [slotInput, setSlotInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const isEditMode = Boolean(initialData?._id || initialData?.id);
+
+  useEffect(() => {
+    if (initialData) {
+      setTitle(initialData.title || '');
+      setDescription(initialData.description || '');
+      setDuration(initialData.duration || '');
+      setTags(Array.isArray(initialData.tags) ? initialData.tags : []);
+      setSlots(Array.isArray(initialData.slots) ? initialData.slots : []);
+      setImage(initialData.image || '');
+      setTagInput('');
+      setSlotInput('');
+      setErrors({});
+    }
+  }, [initialData]);
 
   const validateForm = (): { isValid: boolean; errors: Record<string, string> } => {
     const newErrors: Record<string, string> = {};
@@ -123,21 +141,39 @@ const AddOfferings: React.FC<Props> = ({ closeModal, onAdded }) => {
         ...(image.trim() && { image: image.trim() }),
       };
 
-      const result = await profileService.createOffering(payload);
+      let result;
+
+      if (isEditMode) {
+        const offeringId = initialData?._id || initialData?.id;
+        if (!offeringId) {
+          throw new Error('Offering ID not found.');
+        }
+        result = await profileService.updateOffering(offeringId, payload);
+      } else {
+        result = await profileService.createOffering(payload);
+      }
       
       // Success response: { success: true, message: '...', data: offering }
-      successAlert(result.message || 'Offering added successfully!', 'top-right');
-      // Reset form
-      setTitle('');
-      setDescription('');
-      setDuration('');
-      setTags([]);
-      setSlots([]);
-      setImage('');
-      setTagInput('');
-      setSlotInput('');
-      setErrors({});
-      onAdded?.();
+      successAlert(
+        result.message || (isEditMode ? 'Offering updated successfully!' : 'Offering added successfully!'),
+        'top-right'
+      );
+      
+      if (isEditMode) {
+        onUpdated?.();
+      } else {
+        // Reset form
+        setTitle('');
+        setDescription('');
+        setDuration('');
+        setTags([]);
+        setSlots([]);
+        setImage('');
+        setTagInput('');
+        setSlotInput('');
+        setErrors({});
+        onAdded?.();
+      }
       closeModal();
     } catch (error: any) {
       // Handle validation errors from backend
@@ -205,12 +241,12 @@ const AddOfferings: React.FC<Props> = ({ closeModal, onAdded }) => {
       <Box>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1 }}>
           <TextField 
-            label="Add Tag (press Enter)" 
+          label="Add Tag (press Enter)" 
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={handleTagKeyDown} 
             fullWidth 
-            helperText="Press Enter or click Add Tag"
+          helperText="Press Enter or click Add Tag"
           />
           <Button
             type="button"
@@ -242,12 +278,12 @@ const AddOfferings: React.FC<Props> = ({ closeModal, onAdded }) => {
       <Box>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1 }}>
           <TextField 
-            label="Add Slot (press Enter) *" 
+          label="Add Slot (press Enter) *" 
             value={slotInput}
             onChange={(e) => setSlotInput(e.target.value)}
             onKeyDown={handleSlotKeyDown} 
             error={!!errors.slots}
-            helperText={errors.slots || 'Press Enter or click Add Slot. At least one slot is required.'}
+          helperText={errors.slots || 'Press Enter or click Add Slot. At least one slot is required.'}
             fullWidth 
             required
           />
@@ -306,7 +342,7 @@ const AddOfferings: React.FC<Props> = ({ closeModal, onAdded }) => {
         disabled={loading}
         sx={{ mt: 2 }}
       >
-        {loading ? 'Saving...' : 'Add Offering'}
+        {loading ? 'Saving...' : isEditMode ? 'Update Offering' : 'Add Offering'}
       </Button>
     </Stack>
   );

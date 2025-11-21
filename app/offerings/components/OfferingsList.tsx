@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Box, Card, CardContent, Typography, Grid, CircularProgress, Chip, Button, Avatar } from "@mui/material";
+import { Box, Card, CardContent, Typography, Grid, CircularProgress, Chip, Button, Avatar, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -13,6 +13,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import DateCalendarField from '@/components/DateCalendarField';
+import AddOfferings from './AddOfferings';
 
 interface OfferingsListProps {
   fetchOfferings?: () => Promise<any[]>;
@@ -30,10 +31,13 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
   const [selectedSlots, setSelectedSlots] = useState<Record<string, string>>({});
   const [selectedDates, setSelectedDates] = useState<Record<string, string>>({});
   const [bookingLoading, setBookingLoading] = useState<Record<string, boolean>>({});
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingOffering, setEditingOffering] = useState<any | null>(null);
   
   // Check if user is a student (only students can book)
   const user = getUser();
   const isStudent = user?.role === 'student';
+  const currentUserId = user?._id || user?.id;
 
   // Get minimum date (today)
   const getMinDate = () => {
@@ -100,6 +104,47 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshKey, propOfferings]);
+
+  const handleEditModalClose = () => {
+    setEditingOffering(null);
+    setEditModalOpen(false);
+  };
+
+  const handleEditClick = (offering: any) => {
+    setEditingOffering(offering);
+    setEditModalOpen(true);
+  };
+
+  const handleOfferingUpdated = async () => {
+    if (fetchOfferings && !propOfferings) {
+      await loadOfferings();
+    }
+    onBookingSuccess?.();
+  };
+
+  const getOfferingOwnerId = (offering: any) => {
+    if (!offering) return null;
+
+    if (offering.userId) {
+      if (typeof offering.userId === 'string') {
+        return offering.userId;
+      }
+      if (typeof offering.userId === 'object') {
+        return offering.userId._id || offering.userId.id;
+      }
+    }
+
+    if (offering.user) {
+      if (typeof offering.user === 'string') {
+        return offering.user;
+      }
+      if (typeof offering.user === 'object') {
+        return offering.user._id || offering.user.id;
+      }
+    }
+
+    return null;
+  };
 
   if (loading) {
     return (
@@ -275,6 +320,7 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
   };
 
   return (
+    <>
     <Grid container spacing={2}>
       {offerings.map(off => {
         const selectedSlot = selectedSlots[off._id];
@@ -285,6 +331,7 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
         const firstTag = off.tags && off.tags.length > 0 ? off.tags[0] : null;
         const slotCount = off.slots ? off.slots.length : 0;
         const availableSlots = getAvailableSlots(off, selectedDate);
+        const canEditOffering = Boolean(currentUserId && getOfferingOwnerId(off) === currentUserId);
         
         return (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={off._id}>
@@ -493,33 +540,55 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
                   </Box>
                 )}
                 
-                {/* Booking Button - Show for everyone, but only students can actually book */}
-                {showBookingButton && (
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    startIcon={<EventAvailableIcon />}
-                    onClick={() => handleBooking(off._id)}
-                    disabled={bookingLoading[off._id] || !selectedSlot || !selectedDate || availableSlots.length === 0}
-                    sx={{
-                      mt: 'auto',
-                      backgroundColor: '#16796f',
-                      color: '#fff',
-                      textTransform: 'none',
-                      fontWeight: 600,
-                      py: 1.25,
-                      borderRadius: 1.5,
-                      '&:hover': {
-                        backgroundColor: '#125a4f',
-                      },
-                      '&:disabled': {
-                        backgroundColor: '#e4e7ec',
-                        color: '#98a2b3',
-                      },
-                    }}
-                  >
-                    {bookingLoading[off._id] ? 'Booking...' : 'Book Now'}
-                  </Button>
+                {(showBookingButton || canEditOffering) && (
+                  <Box sx={{ mt: 'auto', display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    {showBookingButton && (
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        startIcon={<EventAvailableIcon />}
+                        onClick={() => handleBooking(off._id)}
+                        disabled={bookingLoading[off._id] || !selectedSlot || !selectedDate || availableSlots.length === 0}
+                        sx={{
+                          backgroundColor: '#16796f',
+                          color: '#fff',
+                          textTransform: 'none',
+                          fontWeight: 600,
+                          py: 1.25,
+                          borderRadius: 1.5,
+                          '&:hover': {
+                            backgroundColor: '#125a4f',
+                          },
+                          '&:disabled': {
+                            backgroundColor: '#e4e7ec',
+                            color: '#98a2b3',
+                          },
+                        }}
+                      >
+                        {bookingLoading[off._id] ? 'Booking...' : 'Book Now'}
+                      </Button>
+                    )}
+
+                    {canEditOffering && (
+                      <Button
+                        variant="outlined"
+                        fullWidth
+                        onClick={() => handleEditClick(off)}
+                        sx={{
+                          textTransform: 'none',
+                          fontWeight: 600,
+                          borderColor: '#16796f',
+                          color: '#16796f',
+                          '&:hover': {
+                            borderColor: '#125a4f',
+                            color: '#125a4f',
+                          },
+                        }}
+                      >
+                        Edit Offering
+                      </Button>
+                    )}
+                  </Box>
                 )}
               </CardContent>
             </Card>
@@ -527,6 +596,25 @@ const OfferingsList = ({ fetchOfferings, offerings: propOfferings, refreshKey = 
         );
       })}
     </Grid>
+
+    {editingOffering && (
+      <Dialog open={editModalOpen} onClose={handleEditModalClose} fullWidth maxWidth="sm">
+        <DialogTitle>Edit Offering</DialogTitle>
+        <DialogContent>
+          <AddOfferings
+            closeModal={handleEditModalClose}
+            onUpdated={() => {
+              handleOfferingUpdated();
+            }}
+            initialData={editingOffering}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleEditModalClose}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
+    )}
+    </>
   );
 };
 

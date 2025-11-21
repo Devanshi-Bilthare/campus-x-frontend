@@ -208,6 +208,16 @@ export const profileService = {
     return parseResponse<OfferingResponse>(response, 'Failed to create offering.');
   },
 
+  updateOffering: async (offeringId: string, data: OfferingData): Promise<OfferingResponse> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/offerings/${offeringId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    return parseResponse<OfferingResponse>(response, 'Failed to update offering.');
+  },
+
   getMyOfferings: async (): Promise<any[]> => {
     const response = await fetch(`${NEXT_PUBLIC_API_URL}/offerings/my/offerings`, {
       method: 'GET',

@@ -210,16 +210,16 @@ const OverviewSection = ({ user, showDashboard = true, profileId, refreshKey = 0
                 <CircularProgress />
               </Box>
             ) : (
-              <Grid container spacing={3}>
+        <Grid container spacing={3}>
                 {dashboardStats.map((stat) => (
                   <Grid key={stat.label} size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
-                    <Card
-                      sx={{
-                        borderRadius: "12px",
-                        border: "1px solid #EAECF0",
-                        boxShadow: "none",
+              <Card
+                sx={{
+                  borderRadius: "12px",
+                  border: "1px solid #EAECF0",
+                  boxShadow: "none",
                         background: stat.bgColor,
-                        height: "100%",
+                  height: "100%",
                         transition: 'transform 0.2s',
                         '&:hover': {
                           transform: 'translateY(-4px)',
@@ -241,8 +241,8 @@ const OverviewSection = ({ user, showDashboard = true, profileId, refreshKey = 0
                         >
                           {stat.value}
                         </Typography>
-                        <Typography
-                          variant="subtitle2"
+                  <Typography
+                    variant="subtitle2"
                           sx={{ 
                             color: "#535862", 
                             textTransform: "uppercase", 
@@ -251,12 +251,12 @@ const OverviewSection = ({ user, showDashboard = true, profileId, refreshKey = 0
                           }}
                         >
                           {stat.label}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
             )}
           </>
         ) : (

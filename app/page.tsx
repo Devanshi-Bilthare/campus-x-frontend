@@ -20,12 +20,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import SearchIcon from '@mui/icons-material/Search';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SchoolIcon from '@mui/icons-material/School';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
-import PersonIcon from '@mui/icons-material/Person';
 import StarIcon from '@mui/icons-material/Star';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import Rating from '@mui/material/Rating';
 import { profileService } from './services/profileService';
 import OfferingsList from './offerings/components/OfferingsList';
 import { getUser } from './utils/auth';
@@ -33,7 +32,9 @@ import { getUser } from './utils/auth';
 export default function Home() {
   const router = useRouter();
   const [topOfferings, setTopOfferings] = useState<any[]>([]);
-  const [topContributors, setTopContributors] = useState<any[]>([]);
+  const [topInstructors, setTopInstructors] = useState<any[]>([]);
+  const [totalOfferings, setTotalOfferings] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const currentUser = getUser();
@@ -42,12 +43,23 @@ export default function Home() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [offerings, contributors] = await Promise.all([
+        const [offerings, instructors, allOfferings] = await Promise.all([
           profileService.getTopOfferings(6),
-          profileService.getTopContributors(6),
+          profileService.getTopInstructors(6),
+          profileService.getAllOfferings().catch(() => []),
         ]);
         setTopOfferings(offerings);
-        setTopContributors(contributors);
+        setTopInstructors(instructors);
+        setTotalOfferings(allOfferings);
+        
+        // Fetch some recent reviews
+        try {
+          const allReviews = await profileService.getReviews({ limit: 6 });
+          setReviews(Array.isArray(allReviews) ? allReviews : (allReviews?.data || []));
+        } catch (error) {
+          console.error('Failed to fetch reviews:', error);
+          setReviews([]);
+        }
       } catch (error) {
         console.error('Failed to fetch home data:', error);
       } finally {
@@ -82,15 +94,47 @@ export default function Home() {
       {/* Hero Section */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #16796f 0%, #0f4a42 100%)',
-          color: '#fff',
+          position: 'relative',
           py: { xs: 6, md: 10 },
           px: { xs: 2, md: 4 },
-          position: 'relative',
           overflow: 'hidden',
+          minHeight: { xs: 400, md: 550 },
         }}
       >
-        <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
+        {/* Background Image */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: 0,
+          }}
+        >
+          <Image
+            src="/homebanner.jpg"
+            alt="Learning"
+            fill
+            style={{ objectFit: 'cover' }}
+            unoptimized
+          />
+          {/* Overlay for better text readability */}
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              background: 'linear-gradient(135deg, rgba(22, 121, 111, 0.7) 0%, rgba(15, 74, 66, 0.7) 100%)',
+              zIndex: 1,
+            }}
+          />
+        </Box>
+
+        {/* Content */}
+        <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 }, position: 'relative', zIndex: 2 }}>
           <Grid container spacing={4} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography
@@ -101,103 +145,44 @@ export default function Home() {
                   mb: 3,
                   lineHeight: 1.2,
                   color: '#fff',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
                 }}
               >
-                Develop your skills in a new and unique way
+                Your Skills Can Change Someone's Journey.
               </Typography>
               <Typography
                 variant="body1"
                 sx={{
                   fontSize: { xs: '1rem', md: '1.25rem' },
                   mb: 4,
-                  color: 'rgba(255,255,255,0.9)',
+                  color: 'rgba(255,255,255,0.95)',
                   lineHeight: 1.6,
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
                 }}
               >
-                Join our platform to learn from expert instructors and connect with a community of learners. 
-                Book sessions, share knowledge, and grow together.
+               Teach what you know or learn something new. Book sessions, collaborate, and be part of a community built on knowledge exchange.
               </Typography>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                <Button
-                  variant="contained"
-                  size="large"
-                  onClick={() => router.push('/offerings')}
-                  sx={{
-                    backgroundColor: '#fff',
-                    color: '#16796f',
-                    px: 4,
-                    py: 1.5,
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    textTransform: 'none',
-                    borderRadius: 2,
-                    '&:hover': {
-                      backgroundColor: 'rgba(255,255,255,0.9)',
-                    },
-                  }}
-                >
-                  Browse Offerings
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="large"
-                  startIcon={<PlayArrowIcon />}
-                  sx={{
-                    borderColor: '#fff',
-                    color: '#fff',
-                    px: 4,
-                    py: 1.5,
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    textTransform: 'none',
-                    borderRadius: 2,
-                    '&:hover': {
-                      borderColor: '#fff',
-                      backgroundColor: 'rgba(255,255,255,0.1)',
-                    },
-                  }}
-                >
-                  Watch Video
-                </Button>
-              </Stack>
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Box
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() => router.push('/offerings')}
                 sx={{
-                  position: 'relative',
-                  height: { xs: 300, md: 400 },
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  backgroundColor: '#fff',
+                  color: '#16796f',
+                  px: 4,
+                  py: 1.5,
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  textTransform: 'none',
+                  borderRadius: 2,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.9)',
+                  },
                 }}
               >
-                <Box
-                  sx={{
-                    width: { xs: 250, md: 350 },
-                    height: { xs: 250, md: 350 },
-                    borderRadius: '50%',
-                    border: '3px dashed rgba(255,255,255,0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: { xs: 200, md: 280 },
-                      height: { xs: 200, md: 280 },
-                      borderRadius: '50%',
-                      backgroundColor: 'rgba(255,255,255,0.1)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <PersonIcon sx={{ fontSize: { xs: 100, md: 150 }, color: '#fff' }} />
-                  </Box>
-                </Box>
-              </Box>
+                Browse Offerings
+              </Button>
             </Grid>
           </Grid>
         </Container>
@@ -210,12 +195,12 @@ export default function Home() {
             Search Offerings
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            Or, Search for over 50+ offerings
+            Or, Search for over {totalOfferings.length}+ offerings
           </Typography>
           <Box sx={{ display: 'flex', gap: 2, maxWidth: 600, mx: 'auto' }}>
             <TextField
               fullWidth
-              placeholder="Search for over 50+ offerings"
+              placeholder={`Search for over ${topOfferings.length}+ offerings`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => {
@@ -263,29 +248,96 @@ export default function Home() {
       {/* Benefits Section */}
       <Box sx={{ bgcolor: '#f8fafc', py: { xs: 6, md: 8 }, px: { xs: 2, md: 4 } }}>
         <Container maxWidth="lg" sx={{ px: { xs: 2, md: 4 } }}>
-          <Grid container spacing={4} alignItems="center">
+          <Grid container spacing={4} alignItems="center" justifyContent="space-between">
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(2, 1fr)',
-                  gap: 2,
-                  maxWidth: 300,
+                  gap: 3,
+                  maxWidth: 400,
+                  mx: 'auto',
                 }}
               >
-                {[1, 2, 3, 4].map((i) => (
-                  <Avatar
-                    key={i}
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      bgcolor: '#16796f',
-                      fontSize: '2rem',
-                    }}
-                  >
-                    {i}
-                  </Avatar>
-                ))}
+                {/* Top-left: Circular shape with light blue background */}
+                <Box
+                  sx={{
+                    position: 'relative',
+                    width: '100%',
+                    paddingTop: '100%',
+                    borderRadius: '50%',
+                    overflow: 'hidden',
+                    bgcolor: '#E3F2FD',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  }}
+                >
+                  <Image
+                    src="/benifit-1.avif"
+                    alt="Benefit 1"
+                    fill
+                    style={{ objectFit: 'cover' }}
+                  />
+                </Box>
+
+                {/* Top-right: Rounded rectangle with top-left corner rounded, vibrant blue background */}
+                <Box
+                  sx={{
+                    position: 'relative',
+                    width: '100%',
+                    paddingTop: '100%',
+                    borderRadius: '16px 16px 16px 4px',
+                    overflow: 'hidden',
+                    bgcolor: '#1976D2',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  }}
+                >
+                  <Image
+                    src="/benifit-2.avif"
+                    alt="Benefit 2"
+                    fill
+                    style={{ objectFit: 'cover' }}
+                  />
+                </Box>
+
+                {/* Bottom-left: Rounded rectangle with top-right corner rounded, soft lavender background */}
+                <Box
+                  sx={{
+                    position: 'relative',
+                    width: '100%',
+                    paddingTop: '100%',
+                    borderRadius: '4px 16px 16px 16px',
+                    overflow: 'hidden',
+                    bgcolor: '#E1BEE7',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  }}
+                >
+                  <Image
+                    src="/benifit-3.avif"
+                    alt="Benefit 3"
+                    fill
+                    style={{ objectFit: 'cover' }}
+                  />
+                </Box>
+
+                {/* Bottom-right: Circular shape with bright blue background */}
+                <Box
+                  sx={{
+                    position: 'relative',
+                    width: '100%',
+                    paddingTop: '100%',
+                    borderRadius: '50%',
+                    overflow: 'hidden',
+                    bgcolor: '#03A9F4',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  }}
+                >
+                  <Image
+                    src="/benifit-4.avif"
+                    alt="Benefit 4"
+                    fill
+                    style={{ objectFit: 'cover' }}
+                  />
+                </Box>
               </Box>
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
@@ -294,10 +346,10 @@ export default function Home() {
               </Typography>
               <Stack spacing={3}>
                 {[
-                  { icon: <SchoolIcon />, title: 'Expert Instructors', desc: 'Learn from certified professionals' },
-                  { icon: <MenuBookIcon />, title: 'Flexible Sessions', desc: 'Book sessions at your convenience' },
-                  { icon: <PersonIcon />, title: 'Personalized Learning', desc: 'One-on-one or group sessions' },
-                  { icon: <PlayArrowIcon />, title: '100+ Offerings', desc: 'Wide variety of courses available' },
+                  { icon: <SchoolIcon />, title: 'Skill-Based Learning', desc: 'Learn directly from students and mentors who actually practice the skills you want to master.' },
+                  { icon: <MenuBookIcon />, title: 'Flexible Session Booking', desc: 'Choose your preferred time slots and learn at your own pace—no rigid schedules.' },
+                  { icon: <SchoolIcon />, title: `${totalOfferings.length}+ Skill Offerings`, desc: 'Explore a growing library of academic, technical, creative, and hobby-based offerings.'},
+                  { icon: <MenuBookIcon />, title: 'Teach & Earn', desc: 'Share your knowledge, conduct sessions, and earn coins or rewards for every completed class.' },
                 ].map((benefit, index) => (
                   <Box key={index} sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
                     <Box
@@ -474,15 +526,15 @@ export default function Home() {
         )}
       </Container>
 
-      {/* Top Contributors Section */}
+      {/* Top Instructors Section */}
       <Box sx={{ bgcolor: '#f8fafc', py: { xs: 6, md: 8 }, px: { xs: 2, md: 4 } }}>
         <Container maxWidth="lg" sx={{ px: { xs: 2, md: 4 } }}>
           <Box sx={{ textAlign: 'center', mb: 6 }}>
             <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, color: '#16796f' }}>
-              Top Contributors
+              Top Instructors
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Meet our expert instructors and active learners
+              Meet our expert instructors who have conducted the most sessions
             </Typography>
           </Box>
 
@@ -490,17 +542,18 @@ export default function Home() {
             <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
               <CircularProgress />
             </Box>
-          ) : topContributors.length > 0 ? (
+          ) : topInstructors.length > 0 ? (
             <Grid container spacing={3}>
-              {topContributors.map((contributor) => {
-                const contributorName = contributor.fullName || contributor.username || 'User';
-                const contributorImage = contributor.profilePicture || contributor.profileImage || '/auth/profile.png';
-                const contributorId = contributor._id || contributor.id;
+              {topInstructors.map((instructor) => {
+                const instructorName = instructor.fullName || instructor.username || 'Instructor';
+                const instructorImage = instructor.profilePicture || instructor.profileImage || '/auth/profile.png';
+                const instructorId = instructor._id || instructor.id;
+                const completedSessions = instructor.completedSessions || 0;
 
                 return (
-                  <Grid size={{ xs: 6, sm: 4, md: 2 }} key={contributorId}>
+                  <Grid size={{ xs: 6, sm: 4, md: 2 }} key={instructorId}>
                     <Link
-                      href={`/profile/${contributorId}`}
+                      href={`/profile/${instructorId}`}
                       style={{ textDecoration: 'none' }}
                     >
                       <Card
@@ -517,8 +570,8 @@ export default function Home() {
                         }}
                       >
                         <Avatar
-                          src={contributorImage}
-                          alt={contributorName}
+                          src={instructorImage}
+                          alt={instructorName}
                           sx={{
                             width: 80,
                             height: 80,
@@ -527,8 +580,11 @@ export default function Home() {
                             border: '3px solid #16796f',
                           }}
                         />
-                        <Typography variant="body1" sx={{ fontWeight: 600, color: '#16796f' }}>
-                          {contributorName}
+                        <Typography variant="body1" sx={{ fontWeight: 600, color: '#16796f', mb: 0.5 }}>
+                          {instructorName}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
+                          {completedSessions} {completedSessions === 1 ? 'Session' : 'Sessions'}
                         </Typography>
                       </Card>
                     </Link>
@@ -538,34 +594,94 @@ export default function Home() {
             </Grid>
           ) : (
             <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
-              No contributors found.
+              No instructors found.
             </Typography>
           )}
         </Container>
       </Box>
 
-      {/* Top Offerings Section */}
-      <Container maxWidth="xl" sx={{ py: { xs: 4, md: 6 }, px: { xs: 2, md: 4 }, pb: { xs: 6, md: 8 } }}>
-        <Box sx={{ textAlign: 'center', mb: 6 }}>
-          <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, color: '#16796f' }}>
-            Top Offerings
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Explore our most popular learning sessions
-          </Typography>
-        </Box>
-
-        {loading ? (
-          <Box display="flex" justifyContent="center" alignItems="center" minHeight={400}>
-            <CircularProgress />
+      {/* Reviews Section */}
+      {reviews.length > 0 && (
+        <Container maxWidth="lg" sx={{ py: { xs: 6, md: 8 }, px: { xs: 2, md: 4 } }}>
+          <Box sx={{ textAlign: 'center', mb: 6 }}>
+            <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, color: '#16796f' }}>
+              Recent Reviews
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              See what our community is saying
+            </Typography>
           </Box>
-        ) : (
-          <OfferingsList
-            offerings={topOfferings.slice(0, 6)}
-            showBookingButton={!!currentUser}
-          />
-        )}
-      </Container>
+
+          <Grid container spacing={3}>
+            {reviews.slice(0, 6).map((review: any) => {
+              const reviewer = review.userId || review.user || {};
+              const reviewerName = reviewer.fullName || reviewer.username || 'Anonymous';
+              const reviewerImage = reviewer.profilePicture || reviewer.profileImage || '/auth/profile.png';
+              const profile = review.profileId || review.profile || {};
+              const profileName = profile.fullName || profile.username || 'Instructor';
+              const profileId = profile._id || profile.id;
+
+              return (
+                <Grid size={{ xs: 12, md: 6 }} key={review._id || review.id}>
+                  <Card
+                    sx={{
+                      p: 3,
+                      borderRadius: 3,
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                      <Avatar
+                        src={reviewerImage}
+                        alt={reviewerName}
+                        sx={{ width: 48, height: 48 }}
+                      />
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5 }}>
+                          {reviewerName}
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Rating value={review.rating || 0} readOnly size="small" />
+                          <Typography variant="caption" color="text.secondary">
+                            for{' '}
+                            {profileId ? (
+                              <Link
+                                href={`/profile/${profileId}`}
+                                style={{ color: '#16796f', textDecoration: 'none' }}
+                              >
+                                {profileName}
+                              </Link>
+                            ) : (
+                              profileName
+                            )}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        flex: 1,
+                        display: '-webkit-box',
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {review.message}
+                    </Typography>
+                  </Card>
+                </Grid>
+              );
+            })}
+          </Grid>
+        </Container>
+      )}
+
     </Box>
   );
 }

@@ -147,6 +147,18 @@ const Footer = () => {
                 Offerings
               </Link>
               <Link
+                href="/instructors"
+                sx={{
+                  color: 'rgba(255,255,255,0.8)',
+                  textDecoration: 'none',
+                  fontSize: '0.875rem',
+                  '&:hover': { color: '#fff' },
+                  transition: 'color 0.2s',
+                }}
+              >
+                Instructors
+              </Link>
+              <Link
                 href="/about"
                 sx={{
                   color: 'rgba(255,255,255,0.8)',

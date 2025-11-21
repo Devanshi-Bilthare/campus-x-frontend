@@ -670,7 +670,114 @@ export const profileService = {
     }
   },
 
+  // Get top instructors by completed sessions
+  getTopInstructors: async (limit: number = 6): Promise<any[]> => {
+    try {
+      // First, fetch all teachers
+      const userResponse = await fetch(`${NEXT_PUBLIC_API_URL}/users`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      const userResult = await parseResponse<any>(userResponse, 'Failed to fetch users.');
+      const users = Array.isArray(userResult) 
+        ? userResult 
+        : (userResult?.data && Array.isArray(userResult.data) ? userResult.data : []);
+      
+      const teachers = users.filter((user: any) => user.role === 'teacher');
+      
+      // Fetch all bookings and filter for completed ones
+      const bookingsResponse = await fetch(`${NEXT_PUBLIC_API_URL}/bookings`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      
+      const bookingsResult = await parseResponse<any>(bookingsResponse, 'Failed to fetch bookings.');
+      const allBookings = Array.isArray(bookingsResult) 
+        ? bookingsResult 
+        : (bookingsResult?.data && Array.isArray(bookingsResult.data) ? bookingsResult.data : []);
+      
+      // Filter for completed bookings
+      const completedBookings = allBookings.filter((booking: any) => {
+        const status = booking.status?.toLowerCase();
+        return status === 'completed';
+      });
+      
+      // Count sessions per instructor
+      const instructorSessionCount: { [key: string]: { user: any; count: number } } = {};
+      
+      // Initialize all teachers with 0 sessions
+      teachers.forEach((teacher: any) => {
+        const teacherId = teacher._id || teacher.id;
+        if (teacherId) {
+          instructorSessionCount[teacherId] = {
+            user: teacher,
+            count: 0,
+          };
+        }
+      });
+      
+      // Count completed sessions for each instructor
+      completedBookings.forEach((booking: any) => {
+        // Get instructor from offeringOwnerId (populated by backend)
+        const instructor = booking.offeringOwnerId || booking.offeringOwner || {};
+        const instructorId = instructor._id || instructor.id;
+        
+        if (instructorId && instructorSessionCount[instructorId]) {
+          instructorSessionCount[instructorId].count += 1;
+        } else if (instructorId) {
+          // If instructor not in our list, add them
+          instructorSessionCount[instructorId] = {
+            user: instructor,
+            count: 1,
+          };
+        }
+      });
+      
+      // Convert to array and sort by count
+      const instructorsArray = Object.values(instructorSessionCount)
+        .sort((a: any, b: any) => b.count - a.count)
+        .slice(0, limit)
+        .map((item: any) => ({
+          ...item.user,
+          completedSessions: item.count,
+        }));
+      
+      return instructorsArray;
+    } catch (error) {
+      console.error('Failed to fetch top instructors:', error);
+      return [];
+    }
+  },
+
   // Review methods
+  getReviews: async (filters?: { limit?: number; skip?: number }): Promise<any> => {
+    try {
+      let url = `${NEXT_PUBLIC_API_URL}/reviews`;
+      const params = new URLSearchParams();
+      if (filters?.limit) params.append('limit', filters.limit.toString());
+      if (filters?.skip) params.append('skip', filters.skip.toString());
+      if (params.toString()) url += `?${params.toString()}`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await parseResponse<any>(response, 'Failed to fetch reviews.');
+      
+      if (Array.isArray(result)) {
+        return result;
+      }
+      
+      return result?.data || [];
+    } catch (error) {
+      console.error('Failed to fetch reviews:', error);
+      return [];
+    }
+  },
+
   getReviewsByProfile: async (profileId: string): Promise<any> => {
     const response = await fetch(`${NEXT_PUBLIC_API_URL}/reviews/profile/${profileId}`, {
       method: 'GET',

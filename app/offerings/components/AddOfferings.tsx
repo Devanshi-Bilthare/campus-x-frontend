@@ -58,33 +58,41 @@ const AddOfferings: React.FC<Props> = ({ closeModal, onAdded }) => {
     return { isValid: Object.keys(newErrors).length === 0, errors: newErrors };
   };
 
-  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      e.stopPropagation();
-      const trimmedValue = tagInput.trim();
-      if (trimmedValue && !tags.includes(trimmedValue)) {
-        setTags([...tags, trimmedValue]);
-        setTagInput('');
-        if (errors.tags) {
-          setErrors({ ...errors, tags: '' });
-        }
+  const addTag = () => {
+    const trimmedValue = tagInput.trim();
+    if (trimmedValue && !tags.includes(trimmedValue)) {
+      setTags([...tags, trimmedValue]);
+      setTagInput('');
+      if (errors.tags) {
+        setErrors({ ...errors, tags: '' });
       }
     }
   };
 
-  const handleAddSlot = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       e.stopPropagation();
-      const trimmedValue = slotInput.trim();
-      if (trimmedValue && !slots.includes(trimmedValue)) {
-        setSlots([...slots, trimmedValue]);
-        setSlotInput('');
-        if (errors.slots) {
-          setErrors({ ...errors, slots: '' });
-        }
+      addTag();
+    }
+  };
+
+  const addSlot = () => {
+    const trimmedValue = slotInput.trim();
+    if (trimmedValue && !slots.includes(trimmedValue)) {
+      setSlots([...slots, trimmedValue]);
+      setSlotInput('');
+      if (errors.slots) {
+        setErrors({ ...errors, slots: '' });
       }
+    }
+  };
+
+  const handleSlotKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      addSlot();
     }
   };
 
@@ -195,14 +203,29 @@ const AddOfferings: React.FC<Props> = ({ closeModal, onAdded }) => {
       />
 
       <Box>
-        <TextField 
-          label="Add Tag (press Enter)" 
-          value={tagInput}
-          onChange={(e) => setTagInput(e.target.value)}
-          onKeyDown={handleAddTag} 
-          fullWidth 
-          helperText="Press Enter to add a tag"
-        />
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1 }}>
+          <TextField 
+            label="Add Tag (press Enter)" 
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={handleTagKeyDown} 
+            fullWidth 
+            helperText="Press Enter or click Add Tag"
+          />
+          <Button
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={addTag}
+            disabled={!tagInput.trim()}
+            sx={{
+              minWidth: { sm: 130 },
+              height: { sm: '56px' },
+            }}
+          >
+            Add Tag
+          </Button>
+        </Box>
         {tags.length > 0 && (
           <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {tags.map((t, i) => (
@@ -217,16 +240,31 @@ const AddOfferings: React.FC<Props> = ({ closeModal, onAdded }) => {
       </Box>
 
       <Box>
-        <TextField 
-          label="Add Slot (press Enter) *" 
-          value={slotInput}
-          onChange={(e) => setSlotInput(e.target.value)}
-          onKeyDown={handleAddSlot} 
-          error={!!errors.slots}
-          helperText={errors.slots || 'Press Enter to add a time slot. At least one slot is required.'}
-          fullWidth 
-          required
-        />
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1 }}>
+          <TextField 
+            label="Add Slot (press Enter) *" 
+            value={slotInput}
+            onChange={(e) => setSlotInput(e.target.value)}
+            onKeyDown={handleSlotKeyDown} 
+            error={!!errors.slots}
+            helperText={errors.slots || 'Press Enter or click Add Slot. At least one slot is required.'}
+            fullWidth 
+            required
+          />
+          <Button
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={addSlot}
+            disabled={!slotInput.trim()}
+            sx={{
+              minWidth: { sm: 130 },
+              height: { sm: '56px' },
+            }}
+          >
+            Add Slot
+          </Button>
+        </Box>
         {slots.length > 0 && (
           <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {slots.map((s, i) => (

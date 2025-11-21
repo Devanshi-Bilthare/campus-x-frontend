@@ -62,6 +62,7 @@ const OverviewSection = ({ user, showDashboard = true, profileId, refreshKey = 0
               totalBookedSessions: bookingCounts.totalBookedSessions || 0, // Total booked sessions (approved + completed) for instructor
               rejected: bookingCounts.rejectedBookings || 0, // Rejected bookings for instructor's offerings
               completed: bookingCounts.completedBookings || 0, // Completed bookings for instructor's offerings
+              pending: 0, // Not applicable for instructors
               totalOfferings: offeringsCount,
               totalCoins: freshUser?.coins || freshUser?.totalCoins || 0,
             });

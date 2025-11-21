@@ -81,6 +81,18 @@ const getAuthHeaders = () => {
   };
 };
 
+// Optional auth headers - doesn't throw if no token (for public endpoints)
+const getOptionalAuthHeaders = () => {
+  const token = getToken();
+  const headers: { 'Content-Type': string; 'Authorization'?: string } = {
+    'Content-Type': 'application/json',
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+};
+
 interface ProfileData {
   fullName?: string;
   email?: string;
@@ -670,31 +682,66 @@ export const profileService = {
     }
   },
 
-  // Get top instructors by completed sessions
+  // Get top instructors by completed sessions (works without authentication)
   getTopInstructors: async (limit: number = 6): Promise<any[]> => {
     try {
-      // First, fetch all teachers
+      // First, fetch all teachers (using optional auth headers)
       const userResponse = await fetch(`${NEXT_PUBLIC_API_URL}/users`, {
         method: 'GET',
-        headers: getAuthHeaders(),
+        headers: getOptionalAuthHeaders(),
       });
-      const userResult = await parseResponse<any>(userResponse, 'Failed to fetch users.');
+      
+      // If request fails, try without auth
+      let userResult;
+      try {
+        userResult = await parseResponse<any>(userResponse, 'Failed to fetch users.');
+      } catch (error) {
+        // If authenticated request fails, try without auth
+        const publicResponse = await fetch(`${NEXT_PUBLIC_API_URL}/users`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        userResult = await parseResponse<any>(publicResponse, 'Failed to fetch users.');
+      }
+      
       const users = Array.isArray(userResult) 
         ? userResult 
         : (userResult?.data && Array.isArray(userResult.data) ? userResult.data : []);
       
       const teachers = users.filter((user: any) => user.role === 'teacher');
       
-      // Fetch all bookings and filter for completed ones
-      const bookingsResponse = await fetch(`${NEXT_PUBLIC_API_URL}/bookings`, {
-        method: 'GET',
-        headers: getAuthHeaders(),
-      });
-      
-      const bookingsResult = await parseResponse<any>(bookingsResponse, 'Failed to fetch bookings.');
-      const allBookings = Array.isArray(bookingsResult) 
-        ? bookingsResult 
-        : (bookingsResult?.data && Array.isArray(bookingsResult.data) ? bookingsResult.data : []);
+      // Fetch all bookings and filter for completed ones (using optional auth headers)
+      let allBookings: any[] = [];
+      try {
+        const bookingsResponse = await fetch(`${NEXT_PUBLIC_API_URL}/bookings`, {
+          method: 'GET',
+          headers: getOptionalAuthHeaders(),
+        });
+        
+        try {
+          const bookingsResult = await parseResponse<any>(bookingsResponse, 'Failed to fetch bookings.');
+          allBookings = Array.isArray(bookingsResult) 
+            ? bookingsResult 
+            : (bookingsResult?.data && Array.isArray(bookingsResult.data) ? bookingsResult.data : []);
+        } catch (error) {
+          // If authenticated request fails, try without auth
+          const publicBookingsResponse = await fetch(`${NEXT_PUBLIC_API_URL}/bookings`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          const publicBookingsResult = await parseResponse<any>(publicBookingsResponse, 'Failed to fetch bookings.');
+          allBookings = Array.isArray(publicBookingsResult) 
+            ? publicBookingsResult 
+            : (publicBookingsResult?.data && Array.isArray(publicBookingsResult.data) ? publicBookingsResult.data : []);
+        }
+      } catch (error) {
+        // If bookings endpoint requires auth, just continue without session counts
+        console.warn('Could not fetch bookings for session counts:', error);
+      }
       
       // Filter for completed bookings
       const completedBookings = allBookings.filter((booking: any) => {
@@ -779,24 +826,32 @@ export const profileService = {
   },
 
   getReviewsByProfile: async (profileId: string): Promise<any> => {
-    const response = await fetch(`${NEXT_PUBLIC_API_URL}/reviews/profile/${profileId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    try {
+      const response = await fetch(`${NEXT_PUBLIC_API_URL}/reviews/profile/${profileId}`, {
+        method: 'GET',
+        headers: getOptionalAuthHeaders(),
+      });
 
-    const result = await parseResponse<any>(response, 'Failed to fetch reviews.');
-    
-    if (result?.data) {
-      return result.data;
+      const result = await parseResponse<any>(response, 'Failed to fetch reviews.');
+      
+      if (result?.data) {
+        return result.data;
+      }
+      
+      return {
+        reviews: [],
+        averageRating: 0,
+        totalReviews: 0,
+      };
+    } catch (error) {
+      // If request fails, return empty reviews
+      console.warn(`Failed to fetch reviews for profile ${profileId}:`, error);
+      return {
+        reviews: [],
+        averageRating: 0,
+        totalReviews: 0,
+      };
     }
-    
-    return {
-      reviews: [],
-      averageRating: 0,
-      totalReviews: 0,
-    };
   },
 
   createReview: async (profileId: string, rating: number, message: string): Promise<any> => {

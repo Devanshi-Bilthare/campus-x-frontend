@@ -84,12 +84,13 @@ export default function Home() {
         sx={{
           background: 'linear-gradient(135deg, #16796f 0%, #0f4a42 100%)',
           color: '#fff',
-          py: { xs: 8, md: 12 },
+          py: { xs: 6, md: 10 },
+          px: { xs: 2, md: 4 },
           position: 'relative',
           overflow: 'hidden',
         }}
       >
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
           <Grid container spacing={4} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography
@@ -203,7 +204,7 @@ export default function Home() {
       </Box>
 
       {/* Search Section */}
-      <Container maxWidth="lg" sx={{ py: 6 }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 }, px: { xs: 2, md: 4 } }}>
         <Box sx={{ textAlign: 'center', mb: 4 }}>
           <Typography variant="h3" sx={{ fontWeight: 700, mb: 1, color: '#16796f' }}>
             Search Offerings
@@ -260,8 +261,8 @@ export default function Home() {
       </Container>
 
       {/* Benefits Section */}
-      <Box sx={{ bgcolor: '#f8fafc', py: 8 }}>
-        <Container maxWidth="lg">
+      <Box sx={{ bgcolor: '#f8fafc', py: { xs: 6, md: 8 }, px: { xs: 2, md: 4 } }}>
+        <Container maxWidth="lg" sx={{ px: { xs: 2, md: 4 } }}>
           <Grid container spacing={4} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
@@ -331,7 +332,7 @@ export default function Home() {
       </Box>
 
       {/* Popular Offerings Section */}
-      <Container maxWidth="xl" sx={{ py: 8 }}>
+      <Container maxWidth="xl" sx={{ py: { xs: 4, md: 6 }, px: { xs: 2, md: 4 } }}>
         <Box sx={{ textAlign: 'center', mb: 6 }}>
           <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, color: '#16796f' }}>
             Popular Offerings
@@ -474,8 +475,8 @@ export default function Home() {
       </Container>
 
       {/* Top Contributors Section */}
-      <Box sx={{ bgcolor: '#f8fafc', py: 8 }}>
-        <Container maxWidth="lg">
+      <Box sx={{ bgcolor: '#f8fafc', py: { xs: 6, md: 8 }, px: { xs: 2, md: 4 } }}>
+        <Container maxWidth="lg" sx={{ px: { xs: 2, md: 4 } }}>
           <Box sx={{ textAlign: 'center', mb: 6 }}>
             <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, color: '#16796f' }}>
               Top Contributors
@@ -544,7 +545,7 @@ export default function Home() {
       </Box>
 
       {/* Top Offerings Section */}
-      <Container maxWidth="xl" sx={{ py: 8 }}>
+      <Container maxWidth="xl" sx={{ py: { xs: 4, md: 6 }, px: { xs: 2, md: 4 }, pb: { xs: 6, md: 8 } }}>
         <Box sx={{ textAlign: 'center', mb: 6 }}>
           <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, color: '#16796f' }}>
             Top Offerings

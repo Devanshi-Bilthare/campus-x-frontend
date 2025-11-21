@@ -16,17 +16,29 @@ import BookedSessions from "./BookedSessions";
 import PendingBookings from "./PendingBookings";
 import CompletedBookings from "./CompletedBookings";
 import RejectedBookings from "./RejectedBookings";
+import CanceledBookings from "./CanceledBookings";
 import OverviewSection from "./OverviewSection";
+import Reviews from "./Reviews";
 
-
-const TABS = [
+const STUDENT_TABS = [
   { label: "Overview", value: "overview" },
-  { label: "Offerings", value: "offerings" },
   { label: "My Bookings", value: "my-bookings" },
+  { label: "Pending", value: "pending" },
+  { label: "Rejected", value: "rejected" },
+  { label: "Completed", value: "completed" },
+  { label: "Canceled", value: "canceled" },
+  { label: "Profile Info", value: "personal" },
+];
+
+const TEACHER_TABS = [
+  { label: "Overview", value: "overview" },
+  { label: "My Offerings", value: "offerings" },
   { label: "Booked Sessions", value: "booked-sessions" },
   { label: "Pending", value: "pending" },
   { label: "Rejected", value: "rejected" },
   { label: "Completed", value: "completed" },
+  { label: "Canceled", value: "canceled" },
+  { label: "Reviews", value: "reviews" },
   { label: "Personal Info", value: "personal" },
 ];
 
@@ -39,13 +51,26 @@ const ProfileContent = () => {
   const [openModal, setOpenModal] = useState(false);
   const [offeringsRefreshKey, setOfferingsRefreshKey] = useState(0);
 
+  // Determine user role and get appropriate tabs
+  const userRole = user?.role || 'student';
+  const isTeacher = userRole === 'teacher';
+  const TABS = isTeacher ? TEACHER_TABS : STUDENT_TABS;
+
   // Check for tab query parameter
   useEffect(() => {
-    const tabParam = searchParams?.get('tab');
-    if (tabParam && TABS.some(tab => tab.value === tabParam)) {
-      setActiveTab(tabParam);
+    try {
+      const tabParam = searchParams?.get('tab');
+      if (tabParam) {
+        const validTabs = isTeacher ? TEACHER_TABS : STUDENT_TABS;
+        if (validTabs.some(tab => tab.value === tabParam)) {
+          setActiveTab(tabParam);
+        }
+      }
+    } catch (error) {
+      // Handle error silently - use default tab
+      console.error('Error reading search params:', error);
     }
-  }, [searchParams]);
+  }, [searchParams, isTeacher]);
 
   const triggerOfferingsRefresh = () => {
     setOfferingsRefreshKey((prev) => prev + 1);
@@ -107,9 +132,9 @@ const ProfileContent = () => {
         </Tabs>
       </Box>
 
-      <Box sx={{ mt: 4, px: { xs: 2, md: 4 } }}>
+      <Box sx={{ mt: { xs: 3, md: 4 }, px: { xs: 2, md: 4 }, pb: { xs: 4, md: 6 } }}>
         {activeTab === "overview" && (
-          <OverviewSection user={user} />
+          <OverviewSection user={user} showDashboard={true} refreshKey={offeringsRefreshKey} />
         )}
 
         {activeTab === "personal" && (
@@ -159,7 +184,7 @@ const ProfileContent = () => {
 
         {activeTab === "booked-sessions" && (
           <Box sx={{ minHeight: 200 }}>
-            <BookedSessions />
+            <BookedSessions onStatusUpdate={refreshProfile} />
           </Box>
         )}
 
@@ -178,6 +203,18 @@ const ProfileContent = () => {
         {activeTab === "completed" && (
           <Box sx={{ minHeight: 200 }}>
             <CompletedBookings />
+          </Box>
+        )}
+
+        {activeTab === "canceled" && (
+          <Box sx={{ minHeight: 200 }}>
+            <CanceledBookings />
+          </Box>
+        )}
+
+        {activeTab === "reviews" && isTeacher && (
+          <Box sx={{ minHeight: 200 }}>
+            <Reviews profileId={user?._id || user?.id} profileUserId={user?._id || user?.id} />
           </Box>
         )}
       </Box>

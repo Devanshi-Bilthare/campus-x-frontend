@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
+const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL
 
 type ErrorResponse = {
   success?: boolean;
@@ -69,6 +69,7 @@ interface RegisterData {
   username: string;
   email: string;
   password: string;
+  role: "student" | "teacher";
 }
 
 interface RegisterResponse {
@@ -116,7 +117,7 @@ interface LoginResponse {
 
 export const authService = {
   register: async (data: RegisterData): Promise<RegisterResponse> => {
-    const response = await fetch(`${API_BASE_URL}/users/register`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/users/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -128,7 +129,7 @@ export const authService = {
   },
 
   forgotPassword: async (data: ForgotPasswordData): Promise<ForgotPasswordResponse> => {
-    const response = await fetch(`${API_BASE_URL}/users/forgot-password`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/users/forgot-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -140,7 +141,7 @@ export const authService = {
   },
 
   resetPassword: async (data: ResetPasswordData): Promise<ResetPasswordResponse> => {
-    const response = await fetch(`${API_BASE_URL}/users/reset-password`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/users/reset-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -152,7 +153,7 @@ export const authService = {
   },
 
   login: async (data: LoginData): Promise<LoginResponse> => {
-    const response = await fetch(`${API_BASE_URL}/users/login`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/users/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

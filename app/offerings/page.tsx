@@ -122,7 +122,7 @@ const Offerings = () => {
   }, [allOfferings, myBookings, searchQuery, selectedCategory]);
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ py: { xs: 4, md: 6 }, px: { xs: 2, md: 4 } }}>
       {/* Header Section */}
       <Box sx={{ mb: 4 }}>
         <Typography 

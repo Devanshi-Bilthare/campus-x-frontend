@@ -10,6 +10,12 @@ export const useProfile = () => {
 
   const refreshProfile = async () => {
     try {
+      // Check if we're in browser environment
+      if (typeof window === 'undefined') {
+        setIsLoading(false);
+        return;
+      }
+      
       const cachedUser = getUser();
       if (cachedUser) {
         // Fetch fresh data from API

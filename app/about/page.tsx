@@ -71,14 +71,14 @@ export default function About() {
       {/* Hero Section */}
       <Box
         sx={{
-        //   background: 'linear-gradient(135deg, #16796f 0%, #0f4a42 100%)',
           color: '#fff',
-          py: { xs: 8, md: 12 },
+          py: { xs: 6, md: 10 },
+          px: { xs: 2, md: 4 },
           position: 'relative',
           overflow: 'hidden',
         }}
       >
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
           <Grid container spacing={4} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography
@@ -149,8 +149,8 @@ export default function About() {
       </Box>
 
       {/* Partnership/Integration Section */}
-      <Box sx={{ bgcolor: '#f8fafc', py: 4 }}>
-        <Container maxWidth="lg">
+      <Box sx={{ bgcolor: '#f8fafc', py: { xs: 4, md: 6 }, px: { xs: 2, md: 4 } }}>
+        <Container maxWidth="lg" sx={{ px: { xs: 2, md: 4 } }}>
           <Typography
             variant="h6"
             sx={{
@@ -194,7 +194,7 @@ export default function About() {
       </Box>
 
       {/* Features Section */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 }, px: { xs: 2, md: 4 } }}>
         <Grid container spacing={4} alignItems="center">
           <Grid size={{ xs: 12, md: 6 }}>
             <Box
@@ -337,8 +337,8 @@ export default function About() {
       </Container>
 
       {/* Marketplace Exploration Section */}
-      <Box sx={{ bgcolor: '#f8fafc', py: 8 }}>
-        <Container maxWidth="lg">
+      <Box sx={{ bgcolor: '#f8fafc', py: { xs: 6, md: 8 }, px: { xs: 2, md: 4 } }}>
+        <Container maxWidth="lg" sx={{ px: { xs: 2, md: 4 } }}>
           <Box sx={{ textAlign: 'center', mb: 6 }}>
             <Typography
               variant="h2"
@@ -459,7 +459,7 @@ export default function About() {
       </Box>
 
       {/* Collect Reviews Section */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 }, px: { xs: 2, md: 4 } }}>
         <Grid container spacing={4} alignItems="center">
           <Grid size={{ xs: 12, md: 6 }}>
             <Typography
@@ -532,7 +532,7 @@ export default function About() {
           position: 'relative',
         }}
       >
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
           <Grid container spacing={4} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
@@ -655,7 +655,7 @@ export default function About() {
       </Box>
 
       {/* Stats Section */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 }, px: { xs: 2, md: 4 } }}>
         <Grid container spacing={4}>
           {[
             { icon: <PeopleIcon />, value: loading ? '...' : `${stats.totalUsers}+`, label: 'Active Users' },

@@ -1,6 +1,6 @@
 import { getToken, getUser } from '../utils/auth';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 type ErrorResponse = {
   success?: boolean;
@@ -148,7 +148,7 @@ interface OfferingResponse {
 
 export const profileService = {
   getProfile: async (): Promise<ProfileResponse> => {
-    const response = await fetch(`${API_BASE_URL}/users/profile`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/users/profile`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -163,7 +163,7 @@ export const profileService = {
       throw new Error('User ID not found');
     }
 
-    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/users/${userId}`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
@@ -173,7 +173,7 @@ export const profileService = {
   },
 
   updatePassword: async (currentPassword: string, newPassword: string): Promise<ProfileResponse> => {
-    const response = await fetch(`${API_BASE_URL}/users/password`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/users/password`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({
@@ -187,7 +187,7 @@ export const profileService = {
 
   // Offerings methods
   createOffering: async (data: OfferingData): Promise<OfferingResponse> => {
-    const response = await fetch(`${API_BASE_URL}/offerings`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/offerings`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
@@ -197,7 +197,7 @@ export const profileService = {
   },
 
   getMyOfferings: async (): Promise<any[]> => {
-    const response = await fetch(`${API_BASE_URL}/offerings/my/offerings`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/offerings/my/offerings`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -222,7 +222,7 @@ export const profileService = {
     // Try with auth first, fallback to public if needed
     try {
       const headers = getAuthHeaders();
-      const response = await fetch(`${API_BASE_URL}/offerings`, {
+      const response = await fetch(`${NEXT_PUBLIC_API_URL}/offerings`, {
         method: 'GET',
         headers,
       });
@@ -244,7 +244,7 @@ export const profileService = {
     } catch (error: any) {
       // If auth fails, try public endpoint
       if (error.message?.includes('Not authenticated')) {
-        const response = await fetch(`${API_BASE_URL}/offerings`, {
+        const response = await fetch(`${NEXT_PUBLIC_API_URL}/offerings`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -270,13 +270,14 @@ export const profileService = {
   },
 
   // Booking methods
-  createBooking: async (offeringId: string, slot: string): Promise<any> => {
-    const response = await fetch(`${API_BASE_URL}/bookings`, {
+  createBooking: async (offeringId: string, slot: string, date: string | Date): Promise<any> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({
         offeringId,
         slot,
+        date: typeof date === 'string' ? date : date.toISOString().split('T')[0],
       }),
     });
 
@@ -285,7 +286,7 @@ export const profileService = {
 
   // Bookings I made
   getMyBookings: async (): Promise<any[]> => {
-    const response = await fetch(`${API_BASE_URL}/bookings/my/bookings`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings/my/bookings`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -306,7 +307,7 @@ export const profileService = {
   },
 
   getMyPendingBookings: async (): Promise<any[]> => {
-    const response = await fetch(`${API_BASE_URL}/bookings/my/pending`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings/my/pending`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -327,7 +328,7 @@ export const profileService = {
   },
 
   getMyRejectedBookings: async (): Promise<any[]> => {
-    const response = await fetch(`${API_BASE_URL}/bookings/my/rejected`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings/my/rejected`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -348,7 +349,7 @@ export const profileService = {
   },
 
   getMyCompletedBookings: async (): Promise<any[]> => {
-    const response = await fetch(`${API_BASE_URL}/bookings/my/completed`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings/my/completed`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -368,9 +369,61 @@ export const profileService = {
     return [];
   },
 
+  getMyCancelledBookings: async (): Promise<any[]> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+
+    const result = await parseResponse<any>(response, 'Failed to fetch bookings.');
+    
+    let bookings: any[] = [];
+    if (Array.isArray(result)) {
+      bookings = result;
+    } else if (result?.data && Array.isArray(result.data)) {
+      bookings = result.data;
+    } else if (result?.success && result?.data) {
+      bookings = Array.isArray(result.data) ? result.data : [result.data];
+    }
+    
+    // Filter cancelled bookings I made
+    const user = getUser();
+    const userId = user?._id || user?.id;
+    return bookings.filter((b: any) => {
+      const bookingUserId = b.userId?._id || b.userId?.id || b.userId;
+      return bookingUserId === userId && (b.status === 'cancelled' || b.status === 'canceled');
+    });
+  },
+
+  getCancelledBookings: async (): Promise<any[]> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+
+    const result = await parseResponse<any>(response, 'Failed to fetch bookings.');
+    
+    let bookings: any[] = [];
+    if (Array.isArray(result)) {
+      bookings = result;
+    } else if (result?.data && Array.isArray(result.data)) {
+      bookings = result.data;
+    } else if (result?.success && result?.data) {
+      bookings = Array.isArray(result.data) ? result.data : [result.data];
+    }
+    
+    // Filter cancelled bookings for my offerings
+    const user = getUser();
+    const userId = user?._id || user?.id;
+    return bookings.filter((b: any) => {
+      const offeringOwnerId = b.offeringOwnerId?._id || b.offeringOwnerId?.id || b.offeringOwnerId;
+      return offeringOwnerId === userId && (b.status === 'cancelled' || b.status === 'canceled');
+    });
+  },
+
   // Bookings for my offerings (as offering owner)
   getBookedSessions: async (): Promise<any[]> => {
-    const response = await fetch(`${API_BASE_URL}/bookings/my/offerings/sessions`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings/my/offerings/sessions`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -391,7 +444,7 @@ export const profileService = {
   },
 
   getReceivedBookings: async (): Promise<any[]> => {
-    const response = await fetch(`${API_BASE_URL}/bookings/received`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings/received`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -412,7 +465,7 @@ export const profileService = {
   },
 
   getPendingBookings: async (): Promise<any[]> => {
-    const response = await fetch(`${API_BASE_URL}/bookings/pending`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings/pending`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -433,7 +486,7 @@ export const profileService = {
   },
 
   getRejectedBookings: async (): Promise<any[]> => {
-    const response = await fetch(`${API_BASE_URL}/bookings/rejected`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings/rejected`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -454,7 +507,7 @@ export const profileService = {
   },
 
   getCompletedBookings: async (): Promise<any[]> => {
-    const response = await fetch(`${API_BASE_URL}/bookings/completed`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings/completed`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -475,7 +528,7 @@ export const profileService = {
   },
 
   updateBookingStatus: async (bookingId: string, status: string): Promise<any> => {
-    const response = await fetch(`${API_BASE_URL}/bookings/${bookingId}/status`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings/${bookingId}/status`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({ status }),
@@ -486,7 +539,7 @@ export const profileService = {
 
   getAllMyBookings: async (): Promise<any[]> => {
     // Get all bookings I made (for filtering offerings)
-    const response = await fetch(`${API_BASE_URL}/bookings/my/bookings`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/bookings/my/bookings`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -508,7 +561,7 @@ export const profileService = {
 
   // Get user by ID
   getUserById: async (userId: string): Promise<any> => {
-    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/users/${userId}`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -530,16 +583,30 @@ export const profileService = {
         profileService.getCompletedBookings().catch(() => []),
       ]);
 
+      // For instructors: 
+      // - receivedBookings: approved bookings for their offerings (from /bookings/received endpoint)
+      // - completedBookings: completed bookings for their offerings (from /bookings/completed endpoint)
+      // These should be mutually exclusive, but let's filter to be safe
+      
+      // Filter receivedBookings to exclude completed ones (in case there's overlap)
+      const receivedNotCompleted = receivedBookings.filter((b: any) => {
+        const status = b.status?.toLowerCase();
+        return (status === 'approved' || status === 'accepted') && status !== 'completed';
+      });
+
+      // Total booked sessions = approved (not completed) + completed
+      const totalBooked = receivedNotCompleted.length + completedBookings.length;
+
       return {
         myBookings: myBookings.length,
         myPending: myPending.length,
         myRejected: myRejected.length,
         myCompleted: myCompleted.length,
-        receivedBookings: receivedBookings.length,
+        receivedBookings: receivedNotCompleted.length, // Only approved, not completed
         pendingRequests: pendingRequests.length,
         rejectedBookings: rejectedBookings.length,
         completedBookings: completedBookings.length,
-        totalBookedSessions: receivedBookings.length + completedBookings.length,
+        totalBookedSessions: totalBooked,
       };
     } catch (error) {
       console.error('Failed to fetch booking counts:', error);
@@ -587,7 +654,7 @@ export const profileService = {
   // Get top contributors (users with most offerings)
   getTopContributors: async (limit: number = 6): Promise<any[]> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/users`, {
+      const response = await fetch(`${NEXT_PUBLIC_API_URL}/users`, {
         method: 'GET',
         headers: getAuthHeaders(),
       });
@@ -601,6 +668,85 @@ export const profileService = {
       console.error('Failed to fetch top contributors:', error);
       return [];
     }
+  },
+
+  // Review methods
+  getReviewsByProfile: async (profileId: string): Promise<any> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/reviews/profile/${profileId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const result = await parseResponse<any>(response, 'Failed to fetch reviews.');
+    
+    if (result?.data) {
+      return result.data;
+    }
+    
+    return {
+      reviews: [],
+      averageRating: 0,
+      totalReviews: 0,
+    };
+  },
+
+  createReview: async (profileId: string, rating: number, message: string): Promise<any> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/reviews`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        profileId,
+        rating,
+        message,
+      }),
+    });
+
+    return parseResponse<any>(response, 'Failed to create review.');
+  },
+
+  getMyReviews: async (): Promise<any[]> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/reviews/my/reviews`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+
+    const result = await parseResponse<any>(response, 'Failed to fetch my reviews.');
+    
+    if (Array.isArray(result)) {
+      return result;
+    }
+    if (result?.data && Array.isArray(result.data)) {
+      return result.data;
+    }
+    if (result?.success && result?.data) {
+      return Array.isArray(result.data) ? result.data : [result.data];
+    }
+    
+    return [];
+  },
+
+  updateReview: async (reviewId: string, rating: number, message: string): Promise<any> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/reviews/${reviewId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        rating,
+        message,
+      }),
+    });
+
+    return parseResponse<any>(response, 'Failed to update review.');
+  },
+
+  deleteReview: async (reviewId: string): Promise<any> => {
+    const response = await fetch(`${NEXT_PUBLIC_API_URL}/reviews/${reviewId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+
+    return parseResponse<any>(response, 'Failed to delete review.');
   },
 };
 

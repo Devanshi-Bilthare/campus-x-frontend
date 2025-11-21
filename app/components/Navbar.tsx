@@ -1,15 +1,48 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Typography, Avatar, IconButton, Drawer, Box, List, ListItem, Divider } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import Image from 'next/image';
 import Link from 'next/link';
-import { isLoggedIn } from '@/app/utils/auth';
+import { isLoggedIn, getUser } from '@/app/utils/auth';
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState<string>("/auth/profile.png");
+
+  useEffect(() => {
+    const updateProfileImage = () => {
+      const user = getUser();
+      const image = user?.profilePicture || user?.profileImage || "/auth/profile.png";
+      setProfileImage(image);
+    };
+
+    // Initial load
+    updateProfileImage();
+
+    // Listen for storage changes (when user updates profile on another tab/window)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'user') {
+        updateProfileImage();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Also listen for custom events (when user updates profile on same page)
+    const handleUserUpdate = () => {
+      updateProfileImage();
+    };
+
+    window.addEventListener('userUpdated', handleUserUpdate);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userUpdated', handleUserUpdate);
+    };
+  }, []);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -48,7 +81,7 @@ const Navbar = () => {
           {isLoggedIn() ? (
             <Link href="/profile" style={{ textDecoration: 'none', color: '#101828', width: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
               <Avatar
-                src="/auth/profile.png"
+                src={profileImage}
                 alt="Profile"
                 sx={{
                   width: 32,
@@ -70,7 +103,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="flex justify-between w-full px-4 md:px-8 py-4 items-center">
+      <div className="flex justify-between w-full px-4 md:px-8 py-3 md:py-4 items-center">
         <div className="flex items-center gap-4">
           <IconButton
             color="inherit"
@@ -115,7 +148,7 @@ const Navbar = () => {
           {isLoggedIn() ? (
             <Link href="/profile">
               <Avatar
-                src="/auth/profile.png"
+                src={profileImage}
                 alt="Profile"
                 sx={{
                   width: { xs: 32, md: 40 },

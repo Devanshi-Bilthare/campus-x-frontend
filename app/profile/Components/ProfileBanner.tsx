@@ -82,13 +82,13 @@ const ProfileBanner = ({ user, refreshProfile, isEditMode = true }: ProfileBanne
       <div
         className="h-[200px] md:h-[300px] relative rounded-xl"
         style={{
-          backgroundImage: "url(/profile-banner.avif)",
+          backgroundImage: "url(/profile-banner.jpg)",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-[#16796f]/70 z-0 rounded-xl"></div>
+        <div className="absolute inset-0 bg-[#16796f]/60 z-0 rounded-xl"></div>
       </div>
 
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-6 mt-[-50px] md:mt-[-60px] relative z-10 px-4 md:px-8">

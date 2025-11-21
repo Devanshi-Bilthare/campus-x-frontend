@@ -127,7 +127,7 @@ export default function Home() {
               left: 0,
               width: '100%',
               height: '100%',
-              background: 'linear-gradient(135deg, rgba(22, 121, 111, 0.7) 0%, rgba(15, 74, 66, 0.7) 100%)',
+              background: 'linear-gradient(135deg, rgba(22, 121, 111, 0.7) 0%, rgba(15, 74, 66, 0.3) 100%)',
               zIndex: 1,
             }}
           />
